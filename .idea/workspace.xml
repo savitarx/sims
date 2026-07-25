@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Added backend module structure">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +48,10 @@
       <command value="git fetch" />
       <command value="java --version" />
       <command value="java -version" />
+      <command value="git remote -v" />
+      <command value="gh auth status" />
+      <command value="git ls-remote origin " />
+      <command value="git push origin branch_sudharsan " />
     </option>
   </component>
   <component name="SharedIndexes">
@@ -83,6 +85,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added backend module structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added backend module structure" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
