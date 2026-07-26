@@ -1,7 +1,9 @@
-package com.invisos.sims.exam.service;
+package com.invisos.sims.exam.service.impl;
 
 import com.invisos.sims.exam.model.ExamSubjects;
 import com.invisos.sims.exam.repository.ExamSubjectsRepository;
+import com.invisos.sims.exam.service.ExamSubjectsService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

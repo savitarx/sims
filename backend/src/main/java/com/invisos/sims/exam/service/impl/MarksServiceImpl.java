@@ -1,7 +1,9 @@
-package com.invisos.sims.exam.service;
+package com.invisos.sims.exam.service.impl;
 
 import com.invisos.sims.exam.model.Marks;
 import com.invisos.sims.exam.repository.MarksRepository;
+import com.invisos.sims.exam.service.MarksService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

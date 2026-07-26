@@ -8,4 +8,8 @@ import java.util.UUID;
 
 @Repository
 public interface FeesRepository extends JpaRepository<Fees, UUID> {
+
+    boolean existsBySchoolClassClassIdAndAcademicYearAcademicYearIdAndTermName(
+            UUID classId, UUID yearId, String term
+    );
 }
