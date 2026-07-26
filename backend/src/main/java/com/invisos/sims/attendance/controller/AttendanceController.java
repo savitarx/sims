@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,26 +26,31 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping
     public ResponseEntity<List<Attendance>> getAll() {
         return ResponseEntity.ok(attendanceService.findAll());
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
     public ResponseEntity<Attendance> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(attendanceService.findById(id));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
     public ResponseEntity<Attendance> create(@RequestBody Attendance entity) {
         return ResponseEntity.ok(attendanceService.create(entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
     public ResponseEntity<Attendance> update(@PathVariable UUID id, @RequestBody Attendance entity) {
         return ResponseEntity.ok(attendanceService.update(id, entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         attendanceService.delete(id);

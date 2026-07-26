@@ -1,5 +1,7 @@
 package com.invisos.sims.student.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.academic.model.AcademicYears;
 import com.invisos.sims.academic.model.Sections;
 import com.invisos.sims.common.enums.RecordStatus;
@@ -36,7 +38,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentEnrollment {
+public class StudentEnrollment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

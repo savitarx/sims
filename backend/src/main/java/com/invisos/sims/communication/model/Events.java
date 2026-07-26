@@ -1,5 +1,7 @@
 package com.invisos.sims.communication.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.academic.model.Classes;
 import com.invisos.sims.admin.model.AdminStaff;
 import jakarta.persistence.Column;
@@ -27,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Events {
+public class Events extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

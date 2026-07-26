@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,26 +26,31 @@ public class ClassTimetableController {
         this.classTimetableService = classTimetableService;
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping
     public ResponseEntity<List<ClassTimetable>> getAll() {
         return ResponseEntity.ok(classTimetableService.findAll());
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
     public ResponseEntity<ClassTimetable> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(classTimetableService.findById(id));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
     public ResponseEntity<ClassTimetable> create(@RequestBody ClassTimetable entity) {
         return ResponseEntity.ok(classTimetableService.create(entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
     public ResponseEntity<ClassTimetable> update(@PathVariable UUID id, @RequestBody ClassTimetable entity) {
         return ResponseEntity.ok(classTimetableService.update(id, entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         classTimetableService.delete(id);

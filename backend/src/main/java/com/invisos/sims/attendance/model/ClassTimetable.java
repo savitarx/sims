@@ -1,5 +1,7 @@
 package com.invisos.sims.attendance.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.academic.model.Sections;
 import com.invisos.sims.academic.model.Subjects;
 import com.invisos.sims.teacher.model.Teachers;
@@ -28,7 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClassTimetable {
+public class ClassTimetable extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

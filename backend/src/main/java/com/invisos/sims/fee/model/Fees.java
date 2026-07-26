@@ -1,5 +1,7 @@
 package com.invisos.sims.fee.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.academic.model.AcademicYears;
 import com.invisos.sims.academic.model.Classes;
 import jakarta.persistence.Column;
@@ -26,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Fees {
+public class Fees extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

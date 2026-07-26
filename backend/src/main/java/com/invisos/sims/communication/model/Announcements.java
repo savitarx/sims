@@ -1,5 +1,7 @@
 package com.invisos.sims.communication.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.admin.model.AdminStaff;
 import com.invisos.sims.common.enums.AnnouncementPriority;
 import jakarta.persistence.Column;
@@ -28,7 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Announcements {
+public class Announcements extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

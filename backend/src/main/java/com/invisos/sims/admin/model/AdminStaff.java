@@ -1,5 +1,7 @@
 package com.invisos.sims.admin.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.auth.model.Users;
 import com.invisos.sims.common.enums.AdminDesignation;
 import com.invisos.sims.common.enums.UserStatus;
@@ -29,7 +31,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminStaff {
+public class AdminStaff extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

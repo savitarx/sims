@@ -1,5 +1,7 @@
 package com.invisos.sims.exam.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExamTimetable {
+public class ExamTimetable extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

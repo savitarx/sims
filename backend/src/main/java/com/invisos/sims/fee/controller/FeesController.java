@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,26 +26,31 @@ public class FeesController {
         this.feesService = feesService;
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping
     public ResponseEntity<List<Fees>> getAll() {
         return ResponseEntity.ok(feesService.findAll());
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
     public ResponseEntity<Fees> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(feesService.findById(id));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
     public ResponseEntity<Fees> create(@RequestBody Fees entity) {
         return ResponseEntity.ok(feesService.create(entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
     public ResponseEntity<Fees> update(@PathVariable UUID id, @RequestBody Fees entity) {
         return ResponseEntity.ok(feesService.update(id, entity));
     }
 
+    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         feesService.delete(id);
