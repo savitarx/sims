@@ -1,5 +1,7 @@
 package com.invisos.sims.teacher.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.admin.model.AdminStaff;
 import com.invisos.sims.auth.model.Users;
 import com.invisos.sims.common.enums.TeacherDesignation;
@@ -30,7 +32,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Teachers {
+public class Teachers extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

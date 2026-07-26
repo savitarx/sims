@@ -1,5 +1,7 @@
 package com.invisos.sims.student.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.common.enums.RelationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Parents {
+public class Parents extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -1,5 +1,7 @@
 package com.invisos.sims.auth.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.common.enums.UserRole;
 import com.invisos.sims.common.enums.UserStatus;
 import jakarta.persistence.Column;
@@ -26,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Users {
+public class Users extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,9 +52,7 @@ public class Users {
     @Column(name = "status")
     private UserStatus status;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
+    // createdAt is inherited from BaseEntity (auditing).
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 }

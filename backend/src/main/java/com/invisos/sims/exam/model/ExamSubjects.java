@@ -1,5 +1,7 @@
 package com.invisos.sims.exam.model;
 
+import com.invisos.sims.common.entity.BaseEntity;
+
 import com.invisos.sims.academic.model.Classes;
 import com.invisos.sims.academic.model.Subjects;
 import jakarta.persistence.Column;
@@ -26,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExamSubjects {
+public class ExamSubjects extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
