@@ -30,19 +30,19 @@ public class ExamsController {
         return "Exam API Working!";
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
     public ResponseEntity<List<ExamResponseDto>> getAll() {
         return ResponseEntity.ok(examMapper.toResponseList(examsService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
     public ResponseEntity<ExamResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(examMapper.toResponse(examsService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
     public ResponseEntity<ExamResponseDto> create(
             @Valid @RequestBody ExamRequestDto request) {
@@ -51,7 +51,7 @@ public class ExamsController {
         return ResponseEntity.ok(examMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
     public ResponseEntity<ExamResponseDto> update(
             @PathVariable UUID id,
@@ -61,14 +61,14 @@ public class ExamsController {
         return ResponseEntity.ok(examMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         examsService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}/publish")
     public ResponseEntity<ExamResponseDto> publish(@PathVariable UUID id) {
         Exams publishedExam = examsService.publish(id);

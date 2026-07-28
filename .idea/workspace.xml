@@ -1,27 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/dto/request/ExamRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/dto/response/ExamResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/mapper/ExamMapper.java" afterDir="false" />
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="feat(exam): implement exam CRUD with DTO, mapper and service layer">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/AcademicYearsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/AcademicYearsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/enums/ExamStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/enums/ExamStatus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Exams.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Exams.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamSubjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamSubjectsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamTimetableServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamTimetableServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/MarksServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/MarksServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V1__init_schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V1__init_schema.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +111,8 @@
     <MESSAGE value="Added backend module structure" />
     <MESSAGE value="updated workspace.xml" />
     <MESSAGE value="feat: add shared foundation (auditing, JWT security, Flyway, DTO pattern)&#10;&#10;- BaseEntity with auditing; GlobalExceptionHandler; Spring Security (JWT + method security)&#10;- Flyway migrations (V1 schema, V2 seed data); Hibernate validate mode&#10;- DTO + MapStruct example (Students); @PreAuthorize placeholders on all controllers&#10;- BUILD SUCCESS; all 23 entities; Flyway applied live&#10;&#10;Ready for service layer development." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add shared foundation (auditing, JWT security, Flyway, DTO pattern)&#10;&#10;- BaseEntity with auditing; GlobalExceptionHandler; Spring Security (JWT + method security)&#10;- Flyway migrations (V1 schema, V2 seed data); Hibernate validate mode&#10;- DTO + MapStruct example (Students); @PreAuthorize placeholders on all controllers&#10;- BUILD SUCCESS; all 23 entities; Flyway applied live&#10;&#10;Ready for service layer development." />
+    <MESSAGE value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
