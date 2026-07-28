@@ -1,17 +1,13 @@
 package com.invisos.sims.academic.controller;
 
+import com.invisos.sims.academic.dto.request.SubjectRequestDto;
+import com.invisos.sims.academic.dto.response.SubjectResponseDto;
+import com.invisos.sims.academic.mapper.SubjectMapper;
 import com.invisos.sims.academic.model.Subjects;
 import com.invisos.sims.academic.service.SubjectsService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +17,50 @@ import java.util.UUID;
 public class SubjectsController {
 
     private final SubjectsService subjectsService;
+    private final SubjectMapper subjectMapper;
 
-    public SubjectsController(SubjectsService subjectsService) {
+    public SubjectsController(SubjectsService subjectsService, SubjectMapper subjectMapper) {
         this.subjectsService = subjectsService;
+        this.subjectMapper = subjectMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Subject API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<Subjects>> getAll() {
-        return ResponseEntity.ok(subjectsService.findAll());
+    public ResponseEntity<List<SubjectResponseDto>> getAll() {
+        return ResponseEntity.ok(subjectMapper.toResponseList(subjectsService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
-    public ResponseEntity<Subjects> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(subjectsService.findById(id));
+    public ResponseEntity<SubjectResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(subjectMapper.toResponse(subjectsService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
-    public ResponseEntity<Subjects> create(@RequestBody Subjects entity) {
-        return ResponseEntity.ok(subjectsService.create(entity));
+    public ResponseEntity<SubjectResponseDto> create(
+            @Valid @RequestBody SubjectRequestDto request) {
+
+        Subjects created = subjectsService.create(request);
+        return ResponseEntity.ok(subjectMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
-    public ResponseEntity<Subjects> update(@PathVariable UUID id, @RequestBody Subjects entity) {
-        return ResponseEntity.ok(subjectsService.update(id, entity));
+    public ResponseEntity<SubjectResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody SubjectRequestDto request) {
+
+        Subjects updated = subjectsService.update(id, request);
+        return ResponseEntity.ok(subjectMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         subjectsService.delete(id);

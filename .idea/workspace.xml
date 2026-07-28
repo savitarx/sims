@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="feat(exam): implement exam CRUD with DTO, mapper and service layer">
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Commented auth for later integration">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SubjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SubjectsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/SubjectsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/SubjectsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamSubjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamSubjectsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/MarksController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/MarksController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamSubjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamSubjectsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/MarksService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/MarksService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamSubjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamSubjectsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/MarksServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/MarksServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +124,8 @@
     <MESSAGE value="updated workspace.xml" />
     <MESSAGE value="feat: add shared foundation (auditing, JWT security, Flyway, DTO pattern)&#10;&#10;- BaseEntity with auditing; GlobalExceptionHandler; Spring Security (JWT + method security)&#10;- Flyway migrations (V1 schema, V2 seed data); Hibernate validate mode&#10;- DTO + MapStruct example (Students); @PreAuthorize placeholders on all controllers&#10;- BUILD SUCCESS; all 23 entities; Flyway applied live&#10;&#10;Ready for service layer development." />
     <MESSAGE value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
+    <MESSAGE value="Commented auth for later integration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commented auth for later integration" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -4,10 +4,16 @@ import com.invisos.sims.exam.model.ExamSubjects;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ExamSubjectsRepository extends JpaRepository<ExamSubjects, UUID> {
+
+    Optional<ExamSubjects> findByExamSubjectId(UUID examSubjectId);
+
+    List<ExamSubjects> findByExamExamId(UUID examId);
 
     boolean existsByExamExamIdAndSubjectSubjectIdAndSchoolClassClassId(
             UUID examId, UUID subjectId, UUID classId

@@ -1,0 +1,367 @@
+openapi: 3.0.0
+info:
+  title: Fees Management API
+  description: Manage school fees and student fee payment status
+  version: 1.0.0
+  contact:
+    name: SIMS Team
+
+servers:
+  - url: http://localhost:8081
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: Fees
+    description: CRUD operations for fee structures
+  - name: Student Fee Status
+    description: Track student fee payment status
+
+paths:
+  /api/v1/fees:
+    get:
+      tags:
+        - Fees
+      summary: List all fees
+      description: Retrieve all fee structures defined in the system
+      operationId: getAllFees
+      responses:
+        '200':
+          description: List of fees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeeResponse'
+
+    post:
+      tags:
+        - Fees
+      summary: Create a new fee structure
+      description: Define a new fee for a class and academic year
+      operationId: createFee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeRequest'
+      responses:
+        '200':
+          description: Fee structure created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponse'
+
+  /api/v1/fees/{id}:
+    get:
+      tags:
+        - Fees
+      summary: Get fee by ID
+      operationId: getFeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The fee ID
+      responses:
+        '200':
+          description: Fee structure details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponse'
+
+    put:
+      tags:
+        - Fees
+      summary: Update fee structure
+      operationId: updateFee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The fee ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeRequest'
+      responses:
+        '200':
+          description: Fee structure updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponse'
+
+    delete:
+      tags:
+        - Fees
+      summary: Delete fee structure
+      operationId: deleteFee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The fee ID
+      responses:
+        '204':
+          description: Fee structure deleted successfully
+
+  /api/v1/student-fee-status:
+    get:
+      tags:
+        - Student Fee Status
+      summary: List all student fee statuses
+      operationId: getAllStudentFeeStatuses
+      responses:
+        '200':
+          description: List of student fee statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentFeeStatusResponse'
+
+    post:
+      tags:
+        - Student Fee Status
+      summary: Create student fee status
+      description: Record or initialize a student's fee payment status for a fee
+      operationId: createStudentFeeStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentFeeStatusRequest'
+      responses:
+        '200':
+          description: Student fee status created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentFeeStatusResponse'
+
+  /api/v1/student-fee-status/{id}:
+    get:
+      tags:
+        - Student Fee Status
+      summary: Get student fee status by ID
+      operationId: getStudentFeeStatusById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The student fee status ID
+      responses:
+        '200':
+          description: Student fee status details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentFeeStatusResponse'
+
+    put:
+      tags:
+        - Student Fee Status
+      summary: Update student fee status
+      description: Update payment status (e.g., PAID, PARTIAL, NOT_PAID) for a student's fee
+      operationId: updateStudentFeeStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The student fee status ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentFeeStatusRequest'
+      responses:
+        '200':
+          description: Student fee status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentFeeStatusResponse'
+
+    delete:
+      tags:
+        - Student Fee Status
+      summary: Delete student fee status
+      operationId: deleteStudentFeeStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The student fee status ID
+      responses:
+        '204':
+          description: Student fee status deleted successfully
+
+  /api/v1/student-fee-status/enrollment/{enrollmentId}:
+    get:
+      tags:
+        - Student Fee Status
+      summary: Get fee statuses for a student enrollment
+      description: Retrieve all fee payment statuses for a specific student enrollment
+      operationId: getStudentFeeStatusesByEnrollmentId
+      parameters:
+        - name: enrollmentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The student enrollment ID
+      responses:
+        '200':
+          description: List of fee statuses for the enrollment
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentFeeStatusResponse'
+
+components:
+  schemas:
+    FeeRequest:
+      type: object
+      required:
+        - classId
+        - academicYearId
+        - termName
+      properties:
+        classId:
+          type: string
+          format: uuid
+          description: The class ID
+        academicYearId:
+          type: string
+          format: uuid
+          description: The academic year ID
+        termName:
+          type: string
+          description: Name of the term (e.g., "Term 1", "Semester 1")
+          example: "Term 1"
+
+    FeeResponse:
+      type: object
+      properties:
+        feeId:
+          type: string
+          format: uuid
+          description: Unique identifier for this fee structure
+        classId:
+          type: string
+          format: uuid
+          description: The class ID
+        academicYearId:
+          type: string
+          format: uuid
+          description: The academic year ID
+        termName:
+          type: string
+          description: Name of the term
+        createdAt:
+          type: string
+          format: date-time
+          description: Record creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Record last update timestamp
+
+    StudentFeeStatusRequest:
+      type: object
+      required:
+        - enrollmentId
+        - feeId
+        - status
+        - updatedById
+      properties:
+        enrollmentId:
+          type: string
+          format: uuid
+          description: The student enrollment ID
+        feeId:
+          type: string
+          format: uuid
+          description: The fee ID
+        status:
+          type: string
+          enum: [PAID, PARTIAL, NOT_PAID]
+          description: Current payment status
+        updatedById:
+          type: string
+          format: uuid
+          description: The teacher ID who updated this status
+
+    StudentFeeStatusResponse:
+      type: object
+      properties:
+        studentFeeStatusId:
+          type: string
+          format: uuid
+          description: Unique identifier for this fee status record
+        enrollmentId:
+          type: string
+          format: uuid
+          description: The student enrollment ID
+        feeId:
+          type: string
+          format: uuid
+          description: The fee ID
+        status:
+          type: string
+          enum: [PAID, PARTIAL, NOT_PAID]
+          description: Current payment status
+        updatedById:
+          type: string
+          format: uuid
+          description: The teacher ID who last updated this
+        createdAt:
+          type: string
+          format: date-time
+          description: Record creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Record last update timestamp
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from login endpoint
+
+security:
+  - BearerAuth: []

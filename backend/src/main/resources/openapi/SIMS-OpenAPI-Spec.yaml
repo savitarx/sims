@@ -1,0 +1,1249 @@
+openapi: 3.0.0
+info:
+  title: SIMS-OpenAPI-Spec
+  version: 1.0.0
+paths:
+  /api/v1/exams:
+    get:
+      summary: Get All Exams
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_get_all_exams_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+      servers:
+        - url: http://localhost:8081
+    post:
+      summary: Create Exam
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_create_exam_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '201':
+          description: Created
+      requestBody:
+        $ref: '#/components/requestBodies/create_exam'
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exams/:examId:
+    delete:
+      summary: Delete Exam
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_delete_exam_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '204':
+          description: No Content
+      parameters:
+        - name: examId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: 85a334ca-78c3-40d2-ad0b-668b98c63176
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exams/ec5a62b1-10b5-4dfb-afdd-748d91158c95:
+    get:
+      summary: Get Exam By Id
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_get_exam_by_id_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+      servers:
+        - url: http://localhost:8081
+    put:
+      summary: Update Exam
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_update_exam_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        $ref: '#/components/requestBodies/update_exam'
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exams/:examId/publish:
+    put:
+      summary: Publish Exam
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exams_publish_exam_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - name: examId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: 7ac16e78-a543-44c3-a295-fbccfc1b9337
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exam-subjects:
+    post:
+      summary: Create a new exam subject
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_create_a_new_exam_subject_yml
+      description: Map a subject to an exam for a specific class with max marks
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  examSubjectId:
+                    type: string
+                  examId:
+                    type: string
+                  subjectId:
+                    type: string
+                  classId:
+                    type: string
+                  maxMarks:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                examSubjectId: ''
+                examId: ''
+                subjectId: ''
+                classId: ''
+                maxMarks: 0
+                createdAt: ''
+                updatedAt: ''
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      requestBody:
+        $ref: '#/components/requestBodies/create_a_new_exam_subject'
+      servers:
+        - url: http://localhost:8081
+    get:
+      summary: List all exam subjects
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_list_all_exam_subjects_yml
+      description: Retrieve a paginated list of all exam subjects
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    examSubjectId:
+                      type: string
+                    examId:
+                      type: string
+                    subjectId:
+                      type: string
+                    classId:
+                      type: string
+                    maxMarks:
+                      type: integer
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              example:
+                - examSubjectId: ''
+                  examId: ''
+                  subjectId: ''
+                  classId: ''
+                  maxMarks: 0
+                  createdAt: ''
+                  updatedAt: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exam-subjects/:id:
+    delete:
+      summary: Delete exam subject
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_delete_exam_subject_yml
+      description: Delete an exam subject (cannot delete if exam is published)
+      tags:
+        - Exam Module
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      parameters:
+        - name: id
+          in: path
+          description: The exam subject ID
+          required: true
+          schema:
+            type: string
+          example: f2d73110-c05f-49a0-8a96-6b6666e6c5ed
+      servers:
+        - url: http://localhost:8081
+    get:
+      summary: Get exam subject by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_get_exam_subject_by_id_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  examSubjectId:
+                    type: string
+                  examId:
+                    type: string
+                  subjectId:
+                    type: string
+                  classId:
+                    type: string
+                  maxMarks:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                examSubjectId: ''
+                examId: ''
+                subjectId: ''
+                classId: ''
+                maxMarks: 0
+                createdAt: ''
+                updatedAt: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      parameters:
+        - name: id
+          in: path
+          description: The exam subject ID
+          required: true
+          schema:
+            type: string
+          example: 6c4a33af-038d-439f-b17f-63d890186737
+      servers:
+        - url: http://localhost:8081
+    put:
+      summary: Update exam subject
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_update_exam_subject_yml
+      description: Update an exam subject (cannot update if exam is published)
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  examSubjectId:
+                    type: string
+                  examId:
+                    type: string
+                  subjectId:
+                    type: string
+                  classId:
+                    type: string
+                  maxMarks:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                examSubjectId: ''
+                examId: ''
+                subjectId: ''
+                classId: ''
+                maxMarks: 0
+                createdAt: ''
+                updatedAt: ''
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      parameters:
+        - name: id
+          in: path
+          description: The exam subject ID
+          required: true
+          schema:
+            type: string
+          example: 6c4a33af-038d-439f-b17f-63d890186737
+      requestBody:
+        $ref: '#/components/requestBodies/update_exam_subject'
+      servers:
+        - url: http://localhost:8081
+  /api/v1/exam-subjects/exam/:examId:
+    get:
+      summary: List subjects for an exam
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_exam_subjects_list_subjects_for_an_exam_yml
+      description: Get all subjects mapped to a specific exam
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    examSubjectId:
+                      type: string
+                    examId:
+                      type: string
+                    subjectId:
+                      type: string
+                    classId:
+                      type: string
+                    maxMarks:
+                      type: integer
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              example:
+                - examSubjectId: ''
+                  examId: ''
+                  subjectId: ''
+                  classId: ''
+                  maxMarks: 0
+                  createdAt: ''
+                  updatedAt: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              example:
+                timestamp: ''
+                status: 0
+                error: ''
+                message: ''
+                path: ''
+      parameters:
+        - name: examId
+          in: path
+          description: The exam ID
+          required: true
+          schema:
+            type: string
+          example: ec5a62b1-10b5-4dfb-afdd-748d91158c95
+      servers:
+        - url: http://localhost:8081
+  /marks:
+    post:
+      summary: Create a new mark record
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_create_a_new_mark_record_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  markId:
+                    type: string
+                  enrollmentId:
+                    type: string
+                  examSubjectId:
+                    type: string
+                  marksObtained:
+                    type: number
+                  enteredById:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                markId: 55555555-5555-5555-5555-555555550001
+                enrollmentId: 11111111-1111-1111-1111-111111110001
+                examSubjectId: 44444444-4444-4444-4444-444444440001
+                marksObtained: 85.5
+                enteredById: 77777777-7777-7777-7777-777777770001
+                createdAt: '2026-07-29T10:30:00Z'
+                updatedAt: '2026-07-29T10:30:00Z'
+      requestBody:
+        $ref: '#/components/requestBodies/create_a_new_mark_record'
+      security:
+        - create_a_new_mark_record: []
+      servers:
+        - url: http://localhost:8081
+  /marks/:id:
+    delete:
+      summary: Delete mark by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_delete_mark_by_id_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '204':
+          description: No Content
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: e9b4c65d-b878-4ed6-8bc3-b5877cfe6322
+      security:
+        - delete_mark_by_id: []
+      servers:
+        - url: http://localhost:8081
+    put:
+      summary: Update mark by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_update_mark_by_id_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  markId:
+                    type: string
+                  enrollmentId:
+                    type: string
+                  examSubjectId:
+                    type: string
+                  marksObtained:
+                    type: number
+                  enteredById:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                markId: 55555555-5555-5555-5555-555555550001
+                enrollmentId: 11111111-1111-1111-1111-111111110001
+                examSubjectId: 44444444-4444-4444-4444-444444440001
+                marksObtained: 85.5
+                enteredById: 77777777-7777-7777-7777-777777770001
+                createdAt: '2026-07-29T10:30:00Z'
+                updatedAt: '2026-07-29T10:30:00Z'
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: d19efdd1-4d61-40b5-8839-6eba86af3cff
+      requestBody:
+        $ref: '#/components/requestBodies/update_mark_by_id'
+      security:
+        - update_mark_by_id: []
+      servers:
+        - url: http://localhost:8081
+  /api/v1/marks/:id:
+    get:
+      summary: Get mark by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_get_mark_by_id_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  markId:
+                    type: string
+                  enrollmentId:
+                    type: string
+                  examSubjectId:
+                    type: string
+                  marksObtained:
+                    type: number
+                  enteredById:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+              example:
+                markId: 55555555-5555-5555-5555-555555550001
+                enrollmentId: 11111111-1111-1111-1111-111111110001
+                examSubjectId: 44444444-4444-4444-4444-444444440001
+                marksObtained: 85.5
+                enteredById: 77777777-7777-7777-7777-777777770001
+                createdAt: '2026-07-29T10:30:00Z'
+                updatedAt: '2026-07-29T10:30:00Z'
+      parameters:
+        - name: id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: d19efdd1-4d61-40b5-8839-6eba86af3cff
+      security:
+        - get_mark_by_id: []
+      servers:
+        - url: http://localhost:8081
+  /marks/enrollment/:enrollmentId:
+    get:
+      summary: Get all marks for a student enrollment
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_get_all_marks_for_a_student_enrollment_yml
+      description: |
+        Retrieve all mark records for a specific student enrollment.
+        Useful for generating student report cards and transcripts.
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    markId:
+                      type: string
+                    enrollmentId:
+                      type: string
+                    examSubjectId:
+                      type: string
+                    marksObtained:
+                      type: number
+                    enteredById:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              example:
+                - markId: 55555555-5555-5555-5555-555555550001
+                  enrollmentId: 11111111-1111-1111-1111-111111110001
+                  examSubjectId: 44444444-4444-4444-4444-444444440001
+                  marksObtained: 85.5
+                  enteredById: 77777777-7777-7777-7777-777777770001
+                  createdAt: '2026-07-29T10:30:00Z'
+                  updatedAt: '2026-07-29T10:30:00Z'
+      parameters:
+        - name: enrollmentId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: 88888888-8888-8888-8888-888888880001
+      security:
+        - get_all_marks_for_a_student_enrollment: []
+      servers:
+        - url: http://localhost:8081
+  /api/v1/marks:
+    get:
+      summary: List all marks
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_list_all_marks_yml
+      description: ''
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    markId:
+                      type: string
+                    enrollmentId:
+                      type: string
+                    examSubjectId:
+                      type: string
+                    marksObtained:
+                      type: number
+                    enteredById:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              example:
+                - markId: 55555555-5555-5555-5555-555555550001
+                  enrollmentId: 11111111-1111-1111-1111-111111110001
+                  examSubjectId: 44444444-4444-4444-4444-444444440001
+                  marksObtained: 85.5
+                  enteredById: 77777777-7777-7777-7777-777777770001
+                  createdAt: '2026-07-29T10:30:00Z'
+                  updatedAt: '2026-07-29T10:30:00Z'
+      security:
+        - list_all_marks: []
+      servers:
+        - url: http://localhost:8081
+  /api/v1/marks/exam-subject/:examSubjectId:
+    get:
+      summary: Get all marks for an exam subject
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_exam_module_marks_get_all_marks_for_an_exam_subject_yml
+      description: |
+        Retrieve all mark records for a specific exam subject.
+        Useful for grade reporting and result publication workflows.
+      tags:
+        - Exam Module
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    markId:
+                      type: string
+                    enrollmentId:
+                      type: string
+                    examSubjectId:
+                      type: string
+                    marksObtained:
+                      type: number
+                    enteredById:
+                      type: string
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+              example:
+                - markId: 55555555-5555-5555-5555-555555550001
+                  enrollmentId: 11111111-1111-1111-1111-111111110001
+                  examSubjectId: 44444444-4444-4444-4444-444444440001
+                  marksObtained: 85.5
+                  enteredById: 77777777-7777-7777-7777-777777770001
+                  createdAt: '2026-07-29T10:30:00Z'
+                  updatedAt: '2026-07-29T10:30:00Z'
+      parameters:
+        - name: examSubjectId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+          example: 3cbcce37-4c04-42aa-982f-e2c1e22f1ee3
+      security:
+        - get_all_marks_for_an_exam_subject: []
+      servers:
+        - url: http://localhost:8081
+servers:
+  - url: http://localhost:8081
+    description: Environment 1
+components:
+  schemas:
+    create_exam:
+      type: object
+      properties:
+        academicYearId:
+          type: string
+        examName:
+          type: string
+        status:
+          type: string
+      example:
+        academicYearId: 11111111-1111-1111-1111-111111110001
+        examName: Test Examination
+        status: DRAFT
+    update_exam:
+      type: object
+      properties:
+        academicYearId:
+          type: string
+        examName:
+          type: string
+        status:
+          type: string
+      example:
+        academicYearId: 11111111-1111-1111-1111-111111110001
+        examName: Half Yearly Examination
+        status: DRAFT
+    create_a_new_exam_subject:
+      type: object
+      properties:
+        examId:
+          type: string
+        subjectId:
+          type: string
+        classId:
+          type: string
+        maxMarks:
+          type: integer
+      example:
+        examId: ec5a62b1-10b5-4dfb-afdd-748d91158c95
+        subjectId: 33333333-3333-3333-3333-333333330001
+        classId: 22222222-2222-2222-2222-222222220001
+        maxMarks: 100
+    update_exam_subject:
+      type: object
+      properties:
+        examId:
+          type: string
+        subjectId:
+          type: string
+        classId:
+          type: string
+        maxMarks:
+          type: integer
+      example:
+        examId: ec5a62b1-10b5-4dfb-afdd-748d91158c95
+        subjectId: 33333333-3333-3333-3333-333333330001
+        classId: 22222222-2222-2222-2222-222222220002
+        maxMarks: 100
+    create_a_new_mark_record:
+      type: object
+      properties:
+        enrollmentId:
+          type: string
+        examSubjectId:
+          type: string
+        marksObtained:
+          type: number
+        enteredById:
+          type: string
+      example:
+        enrollmentId: 11111111-1111-1111-1111-111111110001
+        examSubjectId: 44444444-4444-4444-4444-444444440001
+        marksObtained: 85.5
+        enteredById: 77777777-7777-7777-7777-777777770001
+    update_mark_by_id:
+      type: object
+      properties:
+        enrollmentId:
+          type: string
+        examSubjectId:
+          type: string
+        marksObtained:
+          type: number
+        enteredById:
+          type: string
+      example:
+        enrollmentId: 11111111-1111-1111-1111-111111110001
+        examSubjectId: 44444444-4444-4444-4444-444444440001
+        marksObtained: 85.5
+        enteredById: 77777777-7777-7777-7777-777777770001
+  requestBodies:
+    create_exam:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/create_exam'
+      description: ''
+      required: true
+    update_exam:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/update_exam'
+      description: ''
+      required: true
+    create_a_new_exam_subject:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/create_a_new_exam_subject'
+      description: ''
+      required: true
+    update_exam_subject:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/update_exam_subject'
+      description: ''
+      required: true
+    create_a_new_mark_record:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/create_a_new_mark_record'
+      description: ''
+      required: true
+    update_mark_by_id:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/update_mark_by_id'
+      description: ''
+      required: true
+  securitySchemes:
+    create_a_new_mark_record:
+      type: http
+      scheme: bearer
+    delete_mark_by_id:
+      type: http
+      scheme: bearer
+    get_mark_by_id:
+      type: http
+      scheme: bearer
+    get_all_marks_for_a_student_enrollment:
+      type: http
+      scheme: bearer
+    list_all_marks:
+      type: http
+      scheme: bearer
+    update_mark_by_id:
+      type: http
+      scheme: bearer
+    get_all_marks_for_an_exam_subject:
+      type: http
+      scheme: bearer

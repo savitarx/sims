@@ -1,17 +1,13 @@
 package com.invisos.sims.exam.controller;
 
+import com.invisos.sims.exam.dto.request.MarkRequestDto;
+import com.invisos.sims.exam.dto.response.MarkResponseDto;
+import com.invisos.sims.exam.mapper.MarkMapper;
 import com.invisos.sims.exam.model.Marks;
 import com.invisos.sims.exam.service.MarksService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +17,62 @@ import java.util.UUID;
 public class MarksController {
 
     private final MarksService marksService;
+    private final MarkMapper markMapper;
 
-    public MarksController(MarksService marksService) {
+    public MarksController(MarksService marksService, MarkMapper markMapper) {
         this.marksService = marksService;
+        this.markMapper = markMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Marks API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER
     @GetMapping
-    public ResponseEntity<List<Marks>> getAll() {
-        return ResponseEntity.ok(marksService.findAll());
+    public ResponseEntity<List<MarkResponseDto>> getAll() {
+        return ResponseEntity.ok(markMapper.toResponseList(marksService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
-    public ResponseEntity<Marks> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(marksService.findById(id));
+    public ResponseEntity<MarkResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(markMapper.toResponse(marksService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER
+    @GetMapping("/exam-subject/{examSubjectId}")
+    public ResponseEntity<List<MarkResponseDto>> getByExamSubjectId(@PathVariable UUID examSubjectId) {
+        return ResponseEntity.ok(markMapper.toResponseList(marksService.findByExamSubjectId(examSubjectId)));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    @GetMapping("/enrollment/{enrollmentId}")
+    public ResponseEntity<List<MarkResponseDto>> getByEnrollmentId(@PathVariable UUID enrollmentId) {
+        return ResponseEntity.ok(markMapper.toResponseList(marksService.findByEnrollmentId(enrollmentId)));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to TEACHER (entering marks)
     @PostMapping
-    public ResponseEntity<Marks> create(@RequestBody Marks entity) {
-        return ResponseEntity.ok(marksService.create(entity));
+    public ResponseEntity<MarkResponseDto> create(
+            @Valid @RequestBody MarkRequestDto request) {
+
+        Marks created = marksService.create(request);
+        return ResponseEntity.ok(markMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to TEACHER (editing marks)
     @PutMapping("/{id}")
-    public ResponseEntity<Marks> update(@PathVariable UUID id, @RequestBody Marks entity) {
-        return ResponseEntity.ok(marksService.update(id, entity));
+    public ResponseEntity<MarkResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody MarkRequestDto request) {
+
+        Marks updated = marksService.update(id, request);
+        return ResponseEntity.ok(markMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         marksService.delete(id);
