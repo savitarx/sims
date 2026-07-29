@@ -8,6 +8,7 @@ import com.invisos.sims.common.enums.UserStatus;
 import com.invisos.sims.common.exception.ResourceNotFoundException;
 import com.invisos.sims.common.exception.UserAlreadyExistsException;
 import com.invisos.sims.teacher.dto.TeachersRequestDto;
+import com.invisos.sims.teacher.dto.TeachersResponseDto;
 import com.invisos.sims.teacher.mapper.TeacherMapper;
 import com.invisos.sims.teacher.model.Teachers;
 import com.invisos.sims.teacher.repository.TeachersRepository;
@@ -39,20 +40,42 @@ public class TeachersServiceImpl implements TeachersService {
     }
 
     @Override
-    public List<Teachers> findAll() {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+    public List<TeachersResponseDto> findAll() {
+
+        log.info("Fetching all active teachers.");
+
+        List<Teachers> teachers =
+                teachersRepository.findByStatus(UserStatus.ACTIVE);
+
+        log.info("Retrieved {} active teachers.", teachers.size());
+
+
+        return teacherMapper.toResponseDtoList(teachers);
     }
 
     @Override
-    public Teachers findById(UUID id) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+    public TeachersResponseDto findById(UUID id) {
+
+        log.info("Fetching teacher with ID: {}", id);
+        Teachers existingTeacher = teachersRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Teacher not found with the given id " + id)
+        );
+
+        if (existingTeacher.getStatus() == UserStatus.INACTIVE) {
+            throw new ResourceNotFoundException("Teacher Status is Inactive");
+        }
+
+        if (existingTeacher.getUser().getStatus() == UserStatus.INACTIVE) {
+            throw new IllegalStateException("Associated user is not active");
+        }
+
+        log.info("Successfully retrieved teacher with ID: {}", id);
+        return teacherMapper.toResponseDto(existingTeacher);
     }
 
     @Override
     @Transactional
-    public Teachers create(TeachersRequestDto teachersRequestDto) {
+    public TeachersResponseDto create(TeachersRequestDto teachersRequestDto) {
 
         log.info("Creating teacher with employee ID: {}",
                 teachersRequestDto.getEmployeeId());
@@ -91,7 +114,7 @@ public class TeachersServiceImpl implements TeachersService {
         log.info("Teacher created successfully with teacher ID: {}",
                 savedTeacher.getTeacherId());
 
-        return savedTeacher;
+        return teacherMapper.toResponseDto(savedTeacher);
     }
 
 
@@ -130,9 +153,48 @@ public class TeachersServiceImpl implements TeachersService {
     }
 
     @Override
-    public Teachers update(UUID id, Teachers entity) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+    @Transactional
+    public TeachersResponseDto update(UUID id, TeachersRequestDto dto) {
+
+        log.info("Updating teacher with ID: {}", id);
+
+        Teachers existingTeacher = teachersRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found with the given id " + id));
+
+        if (existingTeacher.getStatus() == UserStatus.INACTIVE) {
+            throw new IllegalStateException("Cannot update an inactive teacher.");
+        }
+
+        if (existingTeacher.getUser().getStatus() == UserStatus.INACTIVE) {
+            throw new IllegalStateException("Associated user is not active");
+        }
+
+        // employeeId uniqueness check, excluding self
+        if (!existingTeacher.getEmployeeId().equals(dto.getEmployeeId())
+                && teachersRepository.existsByEmployeeIdAndTeacherIdNot(dto.getEmployeeId(), id)) {
+            log.warn("Teacher update failed. Employee ID already exists: {}", dto.getEmployeeId());
+            throw new UserAlreadyExistsException("Employee ID already exists.");
+        }
+
+        // sync email to Users if changed
+        if (!existingTeacher.getUser().getEmail().equals(dto.getEmail())) {
+            usersService.updateEmail(existingTeacher.getUser().getUserId(), dto.getEmail());
+        }
+
+        existingTeacher.setEmployeeId(dto.getEmployeeId());
+        existingTeacher.setName(dto.getName());
+        existingTeacher.setParentName(dto.getParentName());
+        existingTeacher.setContact(dto.getContact());
+        existingTeacher.setQualification(dto.getQualification());
+        existingTeacher.setJoiningDate(dto.getJoiningDate());
+        existingTeacher.setPhotoUrl(dto.getPhotoUrl());
+        existingTeacher.setDesignation(dto.getDesignation());
+
+        Teachers updatedTeacher = teachersRepository.save(existingTeacher);
+
+        log.info("Teacher with ID {} updated successfully.", id);
+
+        return teacherMapper.toResponseDto(updatedTeacher);
     }
 
     @Override

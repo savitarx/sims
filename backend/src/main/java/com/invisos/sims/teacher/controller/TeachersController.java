@@ -5,6 +5,7 @@ import com.invisos.sims.teacher.dto.TeachersResponseDto;
 import com.invisos.sims.teacher.mapper.TeacherMapper;
 import com.invisos.sims.teacher.model.Teachers;
 import com.invisos.sims.teacher.service.TeachersService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,29 +35,31 @@ public class TeachersController {
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    //TODO: CREATE AN SEPARATE ENDPOINT SPECIFIC TO USER SPECIFIC TO RETRIVE ONLY ACTIVE
+    //NORMAL USERS -> ACTIVE , ADMIN -> INACTIVE
     @GetMapping
-    public ResponseEntity<List<Teachers>> getAll() {
-        return ResponseEntity.ok(teachersService.findAll());
+    public ResponseEntity<List<TeachersResponseDto>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findAll());
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
-    public ResponseEntity<Teachers> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(teachersService.findById(id));
+    public ResponseEntity<TeachersResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findById(id));
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
-    public ResponseEntity<TeachersResponseDto> create(@RequestBody TeachersRequestDto teacher) {
+    public ResponseEntity<TeachersResponseDto> create(@RequestBody @Valid TeachersRequestDto teacher) {
 
-        Teachers newTeacher = teachersService.create(teacher);
-        return ResponseEntity.status(HttpStatus.CREATED).body(teacherMapper.toResponseDto(newTeacher));
+        TeachersResponseDto newTeacher = teachersService.create(teacher);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newTeacher);
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
-    public ResponseEntity<Teachers> update(@PathVariable UUID id, @RequestBody Teachers teacher) {
-        return ResponseEntity.ok(teachersService.update(id, teacher));
+    public ResponseEntity<TeachersResponseDto> update(@PathVariable UUID id, @RequestBody @Valid TeachersRequestDto teacher) {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.update(id, teacher));
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint

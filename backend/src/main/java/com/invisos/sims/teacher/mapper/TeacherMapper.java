@@ -7,13 +7,17 @@ import com.invisos.sims.teacher.model.Teachers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface TeacherMapper {
 
     @Mapping(source = "user.userId", target = "userId")
-    @Mapping(source = "user.loginId", target = "email")
+    @Mapping(source = "user.email", target = "email")
     @Mapping(source = "user.role", target = "role")
     TeachersResponseDto toResponseDto(Teachers teacher);
+
+    List<TeachersResponseDto> toResponseDtoList(List<Teachers> teachers);
 
 
     @Mapping(target = "status",constant = "ACTIVE")

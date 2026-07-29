@@ -39,7 +39,7 @@ public class TeachersRequestDto {
     @NotBlank(message = "Please enter the qualification")
     private String qualification;
 
-    @NotBlank(message = "Please enter the joining Date")
+    @NotNull(message = "Please enter the joining Date")
     private LocalDate joiningDate;
 
     private String photoUrl;

@@ -91,5 +91,10 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
+    @Override
+    public void updateEmail(UUID userId, String email) {
+
+    }
+
 
 }
