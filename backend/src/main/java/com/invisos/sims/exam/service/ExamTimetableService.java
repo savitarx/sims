@@ -1,5 +1,6 @@
 package com.invisos.sims.exam.service;
 
+import com.invisos.sims.exam.dto.request.ExamTimetableRequestDto;
 import com.invisos.sims.exam.model.ExamTimetable;
 
 import java.util.List;
@@ -11,9 +12,11 @@ public interface ExamTimetableService {
 
     ExamTimetable findById(UUID id);
 
-    ExamTimetable create(ExamTimetable entity);
+    List<ExamTimetable> findByExamId(UUID examId);
 
-    ExamTimetable update(UUID id, ExamTimetable entity);
+    ExamTimetable create(ExamTimetableRequestDto request);
+
+    ExamTimetable update(UUID id, ExamTimetableRequestDto request);
 
     void delete(UUID id);
 }
