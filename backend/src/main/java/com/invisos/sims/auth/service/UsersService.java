@@ -1,5 +1,6 @@
 package com.invisos.sims.auth.service;
 
+import com.invisos.sims.auth.dto.UsersRequestDto;
 import com.invisos.sims.auth.model.Users;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface UsersService {
 
     Users findById(UUID id);
 
-    Users create(Users entity);
+    Users create(UsersRequestDto entity);
 
     Users update(UUID id, Users entity);
 

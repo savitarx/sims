@@ -1,5 +1,6 @@
 package com.invisos.sims.auth.controller;
 
+import com.invisos.sims.auth.dto.UsersRequestDto;
 import com.invisos.sims.auth.model.Users;
 import com.invisos.sims.auth.service.UsersService;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class UsersController {
 
     @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
-    public ResponseEntity<Users> create(@RequestBody Users entity) {
+    public ResponseEntity<Users> create(@RequestBody UsersRequestDto entity) {
         return ResponseEntity.ok(usersService.create(entity));
     }
 
