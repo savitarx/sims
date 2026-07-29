@@ -1,7 +1,5 @@
 package com.invisos.sims.teacher.dto;
 
-import com.invisos.sims.auth.dto.UsersResponseDto;
-import com.invisos.sims.auth.model.Users;
 import com.invisos.sims.common.enums.TeacherDesignation;
 import com.invisos.sims.common.enums.UserRole;
 import com.invisos.sims.common.enums.UserStatus;
