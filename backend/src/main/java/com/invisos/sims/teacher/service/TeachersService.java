@@ -1,5 +1,6 @@
 package com.invisos.sims.teacher.service;
 
+import com.invisos.sims.teacher.dto.TeachersRequestDto;
 import com.invisos.sims.teacher.model.Teachers;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface TeachersService {
 
     Teachers findById(UUID id);
 
-    Teachers create(Teachers entity);
+    Teachers create(TeachersRequestDto entity);
 
     Teachers update(UUID id, Teachers entity);
 
