@@ -289,6 +289,7 @@ CREATE TABLE exam_subjects (
     created_at      DATETIME(6),
     updated_at      DATETIME(6),
     PRIMARY KEY (exam_subject_id),
+    CONSTRAINT uq_exam_subjects_exam_subject_class UNIQUE (exam_id, subject_id, class_id),
     CONSTRAINT fk_exam_subjects_exam FOREIGN KEY (exam_id) REFERENCES exams (exam_id),
     CONSTRAINT fk_exam_subjects_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
     CONSTRAINT fk_exam_subjects_class FOREIGN KEY (class_id) REFERENCES classes (class_id)
@@ -337,6 +338,7 @@ CREATE TABLE fees (
     created_at       DATETIME(6),
     updated_at       DATETIME(6),
     PRIMARY KEY (fee_id),
+    CONSTRAINT uq_fees_class_year_term UNIQUE (class_id, academic_year_id, term_name),
     CONSTRAINT fk_fees_class FOREIGN KEY (class_id) REFERENCES classes (class_id),
     CONSTRAINT fk_fees_academic_year FOREIGN KEY (academic_year_id) REFERENCES academic_years (academic_year_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;

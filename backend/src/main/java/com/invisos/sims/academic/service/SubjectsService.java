@@ -1,5 +1,6 @@
 package com.invisos.sims.academic.service;
 
+import com.invisos.sims.academic.dto.request.SubjectRequestDto;
 import com.invisos.sims.academic.model.Subjects;
 
 import java.util.List;
@@ -11,9 +12,10 @@ public interface SubjectsService {
 
     Subjects findById(UUID id);
 
-    Subjects create(Subjects entity);
+    Subjects create(SubjectRequestDto request);
 
-    Subjects update(UUID id, Subjects entity);
+    Subjects update(UUID id, SubjectRequestDto request);
 
     void delete(UUID id);
+
 }

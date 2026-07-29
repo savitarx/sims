@@ -1,57 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="updated workspace.xml">
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Commented auth for later integration">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/SimsApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/SimsApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/AcademicYearsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/AcademicYearsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/ClassesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/ClassesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SectionsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SectionsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SubjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/controller/SubjectsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/AcademicYears.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/AcademicYears.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Classes.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Classes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Sections.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Sections.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Subjects.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/model/Subjects.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/controller/AdminStaffController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/controller/AdminStaffController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/controller/PrincipalTenureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/controller/PrincipalTenureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/model/AdminStaff.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/model/AdminStaff.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/model/PrincipalTenure.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/admin/model/PrincipalTenure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/controller/AttendanceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/controller/AttendanceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/controller/ClassTimetableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/controller/ClassTimetableController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/model/Attendance.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/model/Attendance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/model/ClassTimetable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/attendance/model/ClassTimetable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/controller/UsersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/controller/UsersController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/model/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/model/Users.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/AnnouncementsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/AnnouncementsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/EventsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/EventsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/model/Announcements.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/model/Announcements.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/model/Events.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/model/Events.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/SubjectsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/repository/SubjectsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/academic/service/SubjectsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamSubjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamSubjectsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/MarksController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/MarksController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/ExamSubjects.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/ExamSubjects.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/ExamTimetable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/ExamTimetable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Exams.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Exams.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Marks.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/model/Marks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/model/Fees.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/model/Fees.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/model/StudentFeeStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/model/StudentFeeStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/ParentsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/ParentsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentEnrollmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentEnrollmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentSubjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentSubjectsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/controller/StudentsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/Parents.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/Parents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/StudentEnrollment.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/StudentEnrollment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/StudentSubjects.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/StudentSubjects.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/Students.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/student/model/Students.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeacherAssignmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeacherAssignmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeachersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeachersController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/TeacherAssignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/TeacherAssignment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/Teachers.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/Teachers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamSubjectsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/MarksRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamSubjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamSubjectsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/MarksService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/MarksService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamSubjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamSubjectsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/MarksServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/MarksServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,6 +61,8 @@
     "git-widget-placeholder": "branch__sudharsan",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/PRODUCTS/SIMS/sims",
+    "node.js.detected.package.jshint": "true",
+    "node.js.selected.package.jshint": "",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
@@ -104,6 +70,11 @@
     "settings.editor.selected.configurable": "advanced.settings"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PRODUCTS\SIMS\sims\backend\src\main\java\com\invisos\sims\exam\service\impl" />
+    </key>
+  </component>
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="git fetch" />
@@ -113,6 +84,7 @@
       <command value="gh auth status" />
       <command value="git ls-remote origin " />
       <command value="git push origin branch_sudharsan " />
+      <command value="git pull origin main" />
     </option>
   </component>
   <component name="SharedIndexes">
@@ -150,7 +122,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added backend module structure" />
     <MESSAGE value="updated workspace.xml" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated workspace.xml" />
+    <MESSAGE value="feat: add shared foundation (auditing, JWT security, Flyway, DTO pattern)&#10;&#10;- BaseEntity with auditing; GlobalExceptionHandler; Spring Security (JWT + method security)&#10;- Flyway migrations (V1 schema, V2 seed data); Hibernate validate mode&#10;- DTO + MapStruct example (Students); @PreAuthorize placeholders on all controllers&#10;- BUILD SUCCESS; all 23 entities; Flyway applied live&#10;&#10;Ready for service layer development." />
+    <MESSAGE value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
+    <MESSAGE value="Commented auth for later integration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commented auth for later integration" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

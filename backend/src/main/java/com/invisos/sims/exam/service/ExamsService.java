@@ -1,5 +1,6 @@
 package com.invisos.sims.exam.service;
 
+import com.invisos.sims.exam.dto.request.ExamRequestDto;
 import com.invisos.sims.exam.model.Exams;
 
 import java.util.List;
@@ -11,9 +12,12 @@ public interface ExamsService {
 
     Exams findById(UUID id);
 
-    Exams create(Exams entity);
+    Exams create(ExamRequestDto request);
 
-    Exams update(UUID id, Exams entity);
+    Exams update(UUID id, ExamRequestDto request);
+
+    Exams publish(UUID id);
 
     void delete(UUID id);
+    
 }
