@@ -2,5 +2,6 @@ package com.invisos.sims.common.enums;
 
 public enum ExamStatus {
     DRAFT,
-    PUBLISHED
+    PUBLISHED,
+    COMPLETED
 }

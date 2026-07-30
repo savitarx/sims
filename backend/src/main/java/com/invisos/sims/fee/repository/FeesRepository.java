@@ -4,8 +4,15 @@ import com.invisos.sims.fee.model.Fees;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FeesRepository extends JpaRepository<Fees, UUID> {
+
+    Optional<Fees> findByFeeId(UUID feeId);
+
+    boolean existsBySchoolClassClassIdAndAcademicYearAcademicYearIdAndTermName(
+            UUID classId, UUID yearId, String term
+    );
 }
