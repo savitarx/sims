@@ -1,19 +1,21 @@
 package com.invisos.sims.teacher.service;
 
-import com.invisos.sims.teacher.model.Teachers;
+import com.invisos.sims.teacher.dto.TeachersRequestDto;
+import com.invisos.sims.teacher.dto.TeachersResponseDto;
+
 
 import java.util.List;
 import java.util.UUID;
 
 public interface TeachersService {
 
-    List<Teachers> findAll();
+    List<TeachersResponseDto> findAll();
 
-    Teachers findById(UUID id);
+    TeachersResponseDto findById(UUID id);
 
-    Teachers create(Teachers entity);
+    TeachersResponseDto create(TeachersRequestDto entity);
 
-    Teachers update(UUID id, Teachers entity);
+    TeachersResponseDto update(UUID id, TeachersRequestDto dto);
 
     void delete(UUID id);
 }
