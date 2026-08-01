@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -43,28 +44,35 @@ public class Teachers extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Users user;
 
-    @Column(name = "employee_id", unique = true)
+    @Column(name = "employee_id", unique = true,nullable = false)
     private String employeeId;
 
-    @Column(name = "name")
+    @Column(name = "name",nullable = false)
     private String name;
 
-    @Column(name = "contact")
+    @Column(name = "parent_name",nullable = false)
+    private String parentName;
+
+    @Column(name = "contact",nullable = false)
     private String contact;
 
-    @Column(name = "qualification")
+
+    @Column(name = "qualification",nullable = false)
     private String qualification;
 
     @Column(name = "photo_url")
     private String photoUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "designation")
+    @Column(name = "designation",nullable=false)
     private TeacherDesignation designation;
+
+    @Column(name = "joining_date",nullable = false)
+    private LocalDate joiningDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private UserStatus status;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
