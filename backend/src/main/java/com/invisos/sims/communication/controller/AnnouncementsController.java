@@ -1,17 +1,14 @@
 package com.invisos.sims.communication.controller;
 
+import com.invisos.sims.common.enums.AnnouncementPriority;
+import com.invisos.sims.communication.dto.request.AnnouncementRequestDto;
+import com.invisos.sims.communication.dto.response.AnnouncementResponseDto;
+import com.invisos.sims.communication.mapper.AnnouncementMapper;
 import com.invisos.sims.communication.model.Announcements;
 import com.invisos.sims.communication.service.AnnouncementsService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +18,60 @@ import java.util.UUID;
 public class AnnouncementsController {
 
     private final AnnouncementsService announcementsService;
+    private final AnnouncementMapper announcementMapper;
 
-    public AnnouncementsController(AnnouncementsService announcementsService) {
+    public AnnouncementsController(AnnouncementsService announcementsService,
+                                   AnnouncementMapper announcementMapper) {
         this.announcementsService = announcementsService;
+        this.announcementMapper = announcementMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Announcement API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<Announcements>> getAll() {
-        return ResponseEntity.ok(announcementsService.findAll());
+    public ResponseEntity<List<AnnouncementResponseDto>> getAll() {
+        return ResponseEntity.ok(announcementMapper.toResponseList(announcementsService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
-    public ResponseEntity<Announcements> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(announcementsService.findById(id));
+    public ResponseEntity<AnnouncementResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(announcementMapper.toResponse(announcementsService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    @GetMapping("/priority/{priority}")
+    public ResponseEntity<List<AnnouncementResponseDto>> getByPriority(
+            @PathVariable AnnouncementPriority priority) {
+
+        return ResponseEntity.ok(
+                announcementMapper.toResponseList(announcementsService.findByPriority(priority)));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
-    public ResponseEntity<Announcements> create(@RequestBody Announcements entity) {
-        return ResponseEntity.ok(announcementsService.create(entity));
+    public ResponseEntity<AnnouncementResponseDto> create(
+            @Valid @RequestBody AnnouncementRequestDto request) {
+
+        Announcements created = announcementsService.create(request);
+        return ResponseEntity.ok(announcementMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
-    public ResponseEntity<Announcements> update(@PathVariable UUID id, @RequestBody Announcements entity) {
-        return ResponseEntity.ok(announcementsService.update(id, entity));
+    public ResponseEntity<AnnouncementResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AnnouncementRequestDto request) {
+
+        Announcements updated = announcementsService.update(id, request);
+        return ResponseEntity.ok(announcementMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         announcementsService.delete(id);

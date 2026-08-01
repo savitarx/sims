@@ -1,17 +1,13 @@
 package com.invisos.sims.communication.controller;
 
+import com.invisos.sims.communication.dto.request.EventRequestDto;
+import com.invisos.sims.communication.dto.response.EventResponseDto;
+import com.invisos.sims.communication.mapper.EventMapper;
 import com.invisos.sims.communication.model.Events;
 import com.invisos.sims.communication.service.EventsService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +17,56 @@ import java.util.UUID;
 public class EventsController {
 
     private final EventsService eventsService;
+    private final EventMapper eventMapper;
 
-    public EventsController(EventsService eventsService) {
+    public EventsController(EventsService eventsService, EventMapper eventMapper) {
         this.eventsService = eventsService;
+        this.eventMapper = eventMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Event API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<Events>> getAll() {
-        return ResponseEntity.ok(eventsService.findAll());
+    public ResponseEntity<List<EventResponseDto>> getAll() {
+        return ResponseEntity.ok(eventMapper.toResponseList(eventsService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
-    public ResponseEntity<Events> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventsService.findById(id));
+    public ResponseEntity<EventResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(eventMapper.toResponse(eventsService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<List<EventResponseDto>> getByClassId(@PathVariable UUID classId) {
+        return ResponseEntity.ok(eventMapper.toResponseList(eventsService.findByClassId(classId)));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
-    public ResponseEntity<Events> create(@RequestBody Events entity) {
-        return ResponseEntity.ok(eventsService.create(entity));
+    public ResponseEntity<EventResponseDto> create(
+            @Valid @RequestBody EventRequestDto request) {
+
+        Events created = eventsService.create(request);
+        return ResponseEntity.ok(eventMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
-    public ResponseEntity<Events> update(@PathVariable UUID id, @RequestBody Events entity) {
-        return ResponseEntity.ok(eventsService.update(id, entity));
+    public ResponseEntity<EventResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody EventRequestDto request) {
+
+        Events updated = eventsService.update(id, request);
+        return ResponseEntity.ok(eventMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         eventsService.delete(id);

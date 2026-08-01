@@ -1,5 +1,6 @@
 package com.invisos.sims.communication.service;
 
+import com.invisos.sims.communication.dto.request.EventRequestDto;
 import com.invisos.sims.communication.model.Events;
 
 import java.util.List;
@@ -11,9 +12,11 @@ public interface EventsService {
 
     Events findById(UUID id);
 
-    Events create(Events entity);
+    List<Events> findByClassId(UUID classId);
 
-    Events update(UUID id, Events entity);
+    Events create(EventRequestDto request);
+
+    Events update(UUID id, EventRequestDto request);
 
     void delete(UUID id);
 }

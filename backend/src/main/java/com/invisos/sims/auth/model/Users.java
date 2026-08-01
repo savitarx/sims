@@ -48,7 +48,6 @@ public class Users extends BaseEntity {
     @Column(name = "role")
     private UserRole role;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UserStatus status;

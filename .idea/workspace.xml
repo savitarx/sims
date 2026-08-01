@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module">
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/dto/UsersRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/exception/UserAlreadyExistsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/dto/TeachersRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/dto/TeachersResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/mapper/TeacherMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamTimetableRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamTimetableRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamTimetableService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamTimetableService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamTimetableServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamTimetableServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/StudentFeeStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/StudentFeeStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/openapi/SIMS-OpenAPI-Spec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/openapi/SIMS-OpenAPI-Spec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/openapi/fees-openapi.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/controller/UsersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/controller/UsersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/repository/UsersRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/repository/UsersRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/service/UsersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/service/UsersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/service/UsersServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/auth/service/UsersServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/common/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeachersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/controller/TeachersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/Teachers.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/model/Teachers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/repository/TeachersRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/repository/TeachersRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/service/TeachersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/service/TeachersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/service/TeachersServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/teacher/service/TeachersServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V1__init_schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V1__init_schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V2__seed_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/db/migration/V2__seed_data.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +65,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "branch__sudharsan",
+    "git-widget-placeholder": "Merging branch__sudharsan",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/PRODUCTS/SIMS/sims",
     "node.js.detected.package.jshint": "true",
@@ -127,7 +133,9 @@
     <MESSAGE value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
     <MESSAGE value="Commented auth for later integration" />
     <MESSAGE value="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module" />
+    <MESSAGE value="Updated ExamTimetable, Fees and StudentFeeStatus CRUD" />
+    <MESSAGE value="Updated Announcements and Events CRUD" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated Announcements and Events CRUD" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
