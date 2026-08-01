@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module">
+    <list default="true" id="09e16b69-fcb1-469b-8637-67d6611445ba" name="Changes" comment="Updated ExamTimetable, Fees and StudentFeeStatus CRUD">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/controller/ExamTimetableController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamTimetableRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/repository/ExamTimetableRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamTimetableService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/ExamTimetableService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamTimetableServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/exam/service/impl/ExamTimetableServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/FeesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/controller/StudentFeeStatusController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/FeesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/StudentFeeStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/repository/StudentFeeStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/FeesServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/fee/service/StudentFeeStatusServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/AnnouncementsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/AnnouncementsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/EventsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/controller/EventsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/repository/AnnouncementsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/repository/AnnouncementsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/repository/EventsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/repository/EventsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/AnnouncementsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/AnnouncementsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/AnnouncementsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/EventsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/EventsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/invisos/sims/communication/service/EventsServiceImpl.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/openapi/SIMS-OpenAPI-Spec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/openapi/SIMS-OpenAPI-Spec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/openapi/fees-openapi.yaml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +122,8 @@
     <MESSAGE value="feat(exam): implement exam CRUD with DTO, mapper and service layer" />
     <MESSAGE value="Commented auth for later integration" />
     <MESSAGE value="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated ExamSubjects and Marks CRUD&#10;Added OpenAPI Spec for Exam Module" />
+    <MESSAGE value="Updated ExamTimetable, Fees and StudentFeeStatus CRUD" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated ExamTimetable, Fees and StudentFeeStatus CRUD" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

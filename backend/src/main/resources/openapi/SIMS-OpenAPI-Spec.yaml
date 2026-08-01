@@ -682,6 +682,233 @@ paths:
           description: ''
       servers:
         - url: http://localhost:8081
+  /api/v1/announcements:
+    post:
+      summary: Create a new announcement
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_create_a_new_announcement_yml
+      description: Publish an announcement attributed to an admin staff member
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/create_a_new_announcement'
+      servers:
+        - url: http://localhost:8081
+    get:
+      summary: List all announcements
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_list_all_announcements_yml
+      description: Retrieve every announcement in the system
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      servers:
+        - url: http://localhost:8081
+  /api/v1/announcements/:id:
+    get:
+      summary: Get announcement by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_get_announcement_by_id_yml
+      description: ''
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The announcement ID
+          required: true
+          schema:
+            type: string
+          example: 2a57283f-d61e-48bd-8ea6-ce7a9fe91ade
+      servers:
+        - url: http://localhost:8081
+    put:
+      summary: Update announcement
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_update_announcement_yml
+      description: ''
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The announcement ID
+          required: true
+          schema:
+            type: string
+          example: 2a57283f-d61e-48bd-8ea6-ce7a9fe91ade
+      requestBody:
+        $ref: '#/components/requestBodies/update_announcement'
+      servers:
+        - url: http://localhost:8081
+    delete:
+      summary: Delete announcement
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_delete_announcement_yml
+      description: ''
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The announcement ID
+          required: true
+          schema:
+            type: string
+          example: b2de41ae-3d75-4b73-97df-bf0f6f5525db
+      servers:
+        - url: http://localhost:8081
+  /api/v1/announcements/priority/:priority:
+    get:
+      summary: List announcements by priority
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_announcements_list_announcements_by_priority_yml
+      description: Filter announcements by their priority level
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: priority
+          in: path
+          description: The announcement priority
+          required: true
+          schema:
+            type: string
+            enum:
+              - URGENT
+              - IMPORTANT
+              - NOTICE
+      servers:
+        - url: http://localhost:8081
+  /api/v1/events/:id:
+    get:
+      summary: Get event by ID
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_get_event_by_id_yml
+      description: ''
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The event ID
+          required: true
+          schema:
+            type: string
+          example: f06ad828-e4b8-48b2-9ba2-ded3b7ccb93b
+      servers:
+        - url: http://localhost:8081
+    put:
+      summary: Update event
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_update_event_yml
+      description: Update an event (end date must not precede start date)
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The event ID
+          required: true
+          schema:
+            type: string
+          example: f06ad828-e4b8-48b2-9ba2-ded3b7ccb93b
+      requestBody:
+        $ref: '#/components/requestBodies/update_event'
+      servers:
+        - url: http://localhost:8081
+    delete:
+      summary: Delete event
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_delete_event_yml
+      description: ''
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: id
+          in: path
+          description: The event ID
+          required: true
+          schema:
+            type: string
+          example: f06ad828-e4b8-48b2-9ba2-ded3b7ccb93b
+      servers:
+        - url: http://localhost:8081
+  /api/v1/events:
+    post:
+      summary: Create a new event
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_create_a_new_event_yml
+      description: Schedule an event; omit `classId` to make it school-wide
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/create_a_new_event'
+      servers:
+        - url: http://localhost:8081
+    get:
+      summary: List all events
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_list_all_events_yml
+      description: Retrieve every event, school-wide and class-specific
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      servers:
+        - url: http://localhost:8081
+  /api/v1/events/class/:classId:
+    get:
+      summary: List events for a class
+      operationId: >-
+        c_users_sudharsan_onedrive_documents_bruno_school_management_system_-_exam_module_-_1_communication_module_events_list_events_for_a_class_yml
+      description: |
+        Get events scoped to a specific class.
+        School-wide events (null class) are not included in this result.
+      tags:
+        - Communication Module
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: classId
+          in: path
+          description: The class ID
+          required: true
+          schema:
+            type: string
+          example: 22222222-2222-2222-2222-222222220002
+      servers:
+        - url: http://localhost:8081
 servers:
   - url: http://localhost:8081
     description: Environment 1
@@ -841,10 +1068,10 @@ components:
         updatedById:
           type: string
       example:
-        enrollmentId: ''
-        feeId: ''
+        enrollmentId: 88888888-8888-8888-8888-888888880001
+        feeId: 8a29debe-722b-4c7c-80e0-0058b800162e
         status: PAID
-        updatedById: ''
+        updatedById: 55555555-5555-5555-5555-555555550002
     update_student_fee_status:
       type: object
       properties:
@@ -857,10 +1084,86 @@ components:
         updatedById:
           type: string
       example:
-        enrollmentId: ''
-        feeId: ''
+        enrollmentId: 88888888-8888-8888-8888-888888880001
+        feeId: 8a29debe-722b-4c7c-80e0-0058b800162e
         status: PAID
-        updatedById: ''
+        updatedById: 55555555-5555-5555-5555-555555550003
+    create_a_new_announcement:
+      type: object
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+        priority:
+          type: string
+        createdById:
+          type: string
+      example:
+        title: Annual Day Rehearsal
+        message: Rehearsals begin Monday at 2 PM in the main hall.
+        priority: URGENT
+        createdById: ''
+    update_announcement:
+      type: object
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+        priority:
+          type: string
+        createdById:
+          type: string
+      example:
+        title: Annual Day Rehearsal
+        message: Rehearsals begin Monday at 2 PM in the main hall.
+        priority: URGENT
+        createdById: ''
+    update_event:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        classId:
+          type: string
+        createdById:
+          type: string
+      example:
+        title: Annual Sports Day
+        description: Track and field events for all grades.
+        startDate: '2026-09-20'
+        endDate: '2026-09-21'
+        classId: ''
+        createdById: ''
+    create_a_new_event:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        classId:
+          type: string
+        createdById:
+          type: string
+      example:
+        title: Annual Sports Day
+        description: Track and field events for all grades.
+        startDate: '2026-09-20'
+        endDate: '2026-09-21'
+        classId: ''
+        createdById: ''
   requestBodies:
     create_exam:
       content:
@@ -944,6 +1247,34 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/update_student_fee_status'
+      description: ''
+      required: true
+    create_a_new_announcement:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/create_a_new_announcement'
+      description: ''
+      required: true
+    update_announcement:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/update_announcement'
+      description: ''
+      required: true
+    update_event:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/update_event'
+      description: ''
+      required: true
+    create_a_new_event:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/create_a_new_event'
       description: ''
       required: true
   securitySchemes:
