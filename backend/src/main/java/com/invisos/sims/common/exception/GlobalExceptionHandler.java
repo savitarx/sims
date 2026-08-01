@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "An unexpected error occurred",
+                ex.getMessage(),
                 request.getRequestURI(),
                 null
         );
@@ -89,6 +90,45 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(body);
     }
 
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleHandlerMethodValidation(
+            HandlerMethodValidationException ex,
+            HttpServletRequest request) {
+
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+
+        ex.getParameterValidationResults().forEach(result -> {
+            result.getResolvableErrors().forEach(error -> {
+                fieldErrors.put(
+                        result.getMethodParameter().getParameterName(),
+                        error.getDefaultMessage()
+                );
+            });
+        });
+
+        ErrorResponse body = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Validation failed")
+                .path(request.getRequestURI())
+                .fieldErrors(fieldErrors)
+                .build();
+
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ErrorResponse> handleStorageException(
+            StorageException ex,
+            HttpServletRequest request) {
+
+        return build(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                request
+        );
+    }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(

@@ -81,7 +81,7 @@ CREATE TABLE teachers (
     contact       VARCHAR(255),
     joining_date  DATE,
     qualification VARCHAR(255),
-    photo_url     VARCHAR(255),
+    photo_key     VARCHAR(255),
     designation   VARCHAR(50),
     status        VARCHAR(50),
     created_by    CHAR(36),

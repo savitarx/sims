@@ -6,13 +6,13 @@ import com.invisos.sims.auth.repository.UsersRepository;
 import com.invisos.sims.common.enums.UserStatus;
 import com.invisos.sims.common.exception.ResourceNotFoundException;
 import com.invisos.sims.common.exception.UserAlreadyExistsException;
-import io.jsonwebtoken.security.Password;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -94,6 +94,16 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public void updateEmail(UUID userId, String email) {
 
+    }
+
+    @Override
+    public void restore(UUID userId) {
+
+    }
+
+    @Override
+    public List<Users> findByEmailIn(Set<String> emails) {
+        return usersRepository.findByEmailIn(emails);
     }
 
 

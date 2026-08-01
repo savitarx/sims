@@ -60,8 +60,8 @@ public class Teachers extends BaseEntity {
     @Column(name = "qualification",nullable = false)
     private String qualification;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
+    @Column(name = "photo_key")
+    private String photoKey;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "designation",nullable=false)

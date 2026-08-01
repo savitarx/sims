@@ -46,7 +46,7 @@ INSERT INTO teachers (
     contact,
     joining_date,
     qualification,
-    photo_url,
+    photo_key,
     designation,
     status,
     created_by,

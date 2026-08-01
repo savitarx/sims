@@ -1,22 +1,15 @@
 package com.invisos.sims.teacher.controller;
 
+import com.invisos.sims.teacher.dto.TeachersCountResponseDto;
 import com.invisos.sims.teacher.dto.TeachersRequestDto;
 import com.invisos.sims.teacher.dto.TeachersResponseDto;
-import com.invisos.sims.teacher.mapper.TeacherMapper;
-import com.invisos.sims.teacher.model.Teachers;
+
 import com.invisos.sims.teacher.service.TeachersService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,19 +20,19 @@ public class TeachersController {
 
     private final TeachersService teachersService;
 
-    private final TeacherMapper teacherMapper;
 
-    public TeachersController(TeachersService teachersService, TeacherMapper teacherMapper) {
+    public TeachersController(TeachersService teachersService) {
         this.teachersService = teachersService;
-        this.teacherMapper = teacherMapper;
+
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
-    //TODO: CREATE AN SEPARATE ENDPOINT SPECIFIC TO USER SPECIFIC TO RETRIVE ONLY ACTIVE
+    //TODO: CREATE AN SEPARATE ENDPOINT SPECIFIC TO USER SPECIFIC TO RETRIEVE ONLY ACTIVE
     //NORMAL USERS -> ACTIVE , ADMIN -> INACTIVE
     @GetMapping
-    public ResponseEntity<List<TeachersResponseDto>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findAll());
+    public ResponseEntity<List<TeachersResponseDto>> getAll(
+            @RequestParam(required = false) Boolean active) {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findAll(active));
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
@@ -68,4 +61,46 @@ public class TeachersController {
         teachersService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TeachersResponseDto> updateStatus(
+            @PathVariable UUID id,
+            @RequestParam boolean active) {
+        return ResponseEntity.ok(teachersService.updateStatus(id, active));
+    }
+
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<TeachersResponseDto> restore(@PathVariable UUID id) {
+        return ResponseEntity.ok(teachersService.restore(id));
+    }
+
+//    @PutMapping("/{id}/photo")
+//    public ResponseEntity<TeachersResponseDto> uploadPhoto(
+//            @PathVariable UUID id,
+//            @RequestParam("file") MultipartFile file) {
+//        return ResponseEntity.ok(teachersService.uploadPhoto(id, file));
+//    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TeachersResponseDto>> search(@RequestParam String query) {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.search(query));
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<TeachersCountResponseDto> count() {
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.getCount());
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<TeachersResponseDto>> createBulk(
+            @RequestBody  List< @Valid  TeachersRequestDto> teachersRequest) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(teachersService.createBulk(teachersRequest));
+    }
+
+    //TO DO: Retrieve the teachers list by the subject details
+    @GetMapping("/by-subject/{subject}") public ResponseEntity<List<TeachersResponseDto>> getBySubject(@PathVariable String subject) {
+        return ResponseEntity.ok(teachersService.findBySubject(subject)); }
 }

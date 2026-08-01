@@ -6,6 +6,7 @@ import com.invisos.sims.common.enums.UserStatus;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -27,13 +28,17 @@ public class TeachersResponseDto {
 
         private String email;
 
+        private String parentName;
+
         private String contact;
 
         private LocalDate joiningDate;
 
         private String qualification;
 
-        private String photoUrl;
+        private String photoKey;
+
+
 
         private TeacherDesignation designation;
 

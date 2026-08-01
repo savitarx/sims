@@ -15,6 +15,7 @@ public interface TeacherMapper {
     @Mapping(source = "user.userId", target = "userId")
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "user.role", target = "role")
+    @Mapping(source="parentName",target="parentName")
     TeachersResponseDto toResponseDto(Teachers teacher);
 
     List<TeachersResponseDto> toResponseDtoList(List<Teachers> teachers);
