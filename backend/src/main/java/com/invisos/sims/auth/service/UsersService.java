@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UsersService {
@@ -21,4 +22,8 @@ public interface UsersService {
     void delete(UUID id);
 
     void updateEmail(UUID userId, String email);
+
+    void restore(UUID userId);
+
+    List<Users> findByEmailIn(Set<String> emails);
 }

@@ -37,11 +37,68 @@ INSERT INTO admin_staff (admin_id, user_id, name, contact, designation, status, 
 -- ----------------------------------------------------------------------------
 -- Teachers
 -- ----------------------------------------------------------------------------
-INSERT INTO teachers (teacher_id, user_id, employee_id, name, parent_name, contact, joining_date, qualification, photo_url, designation, status, created_by, created_at, updated_at) VALUES
-('55555555-5555-5555-5555-555555550001', '33333333-3333-3333-3333-333333330011', 'EMP001', 'Anita Rao',    'Nair',  '9000000011', '2026-08-01', 'M.Sc., B.Ed', NULL, 'SENIOR_TEACHER',    'ACTIVE', '44444444-4444-4444-4444-444444440001', NOW(6), NOW(6)),
-('55555555-5555-5555-5555-555555550002', '33333333-3333-3333-3333-333333330012', 'EMP002', 'Bhaskar Nair', 'Rao',   '9000000012', '2026-07-07', 'M.A., B.Ed',  NULL, 'ASSISTANT_TEACHER', 'ACTIVE', '44444444-4444-4444-4444-444444440001', NOW(6), NOW(6)),
-('55555555-5555-5555-5555-555555550003', '33333333-3333-3333-3333-333333330013', 'EMP003', 'Chitra Menon', 'Menon', '9000000013', '2026-07-01', 'B.Sc., B.Ed', NULL, 'ASSISTANT_TEACHER', 'ACTIVE', '44444444-4444-4444-4444-444444440001', NOW(6), NOW(6));
-
+INSERT INTO teachers (
+    teacher_id,
+    user_id,
+    employee_id,
+    name,
+    parent_name,
+    contact,
+    joining_date,
+    qualification,
+    photo_key,
+    designation,
+    status,
+    created_by,
+    created_at,
+    updated_at
+) VALUES
+      (
+          '55555555-5555-5555-5555-555555550001',
+          '33333333-3333-3333-3333-333333330011',
+          'EMP001',
+          'Anita Rao',
+        'Nair',
+          '9000000011',
+          '2026-08-01',
+          'M.Sc., B.Ed',
+          NULL,
+          'SENIOR_TEACHER',
+          'ACTIVE',
+          '44444444-4444-4444-4444-444444440001',
+            NOW(6),
+          NOW(6)
+      ),
+      (
+          '55555555-5555-5555-5555-555555550002',
+          '33333333-3333-3333-3333-333333330012',
+          'EMP002',
+          'Bhaskar Nair','Rao',
+          '9000000012',
+          '2026-07-07',
+          'M.A., B.Ed',
+          NULL,
+          'ASSISTANT_TEACHER',
+          'ACTIVE',
+          '44444444-4444-4444-4444-444444440001',
+          NOW(6),
+          NOW(6)
+      ),
+      (
+          '55555555-5555-5555-5555-555555550003',
+          '33333333-3333-3333-3333-333333330013',
+          'EMP003',
+          'Chitra Menon','Menon',
+          '9000000013',
+          '2026-07-01',
+          'B.Sc., B.Ed',
+          NULL,
+          'ASSISTANT_TEACHER',
+          'ACTIVE',
+          '44444444-4444-4444-4444-444444440001',
+          NOW(6),
+          NOW(6)
+      );
 -- ----------------------------------------------------------------------------
 -- Students
 -- ----------------------------------------------------------------------------
