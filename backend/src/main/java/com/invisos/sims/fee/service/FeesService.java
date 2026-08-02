@@ -1,5 +1,6 @@
 package com.invisos.sims.fee.service;
 
+import com.invisos.sims.fee.dto.request.FeeRequestDto;
 import com.invisos.sims.fee.model.Fees;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface FeesService {
 
     Fees findById(UUID id);
 
-    Fees create(Fees entity);
+    Fees create(FeeRequestDto request);
 
-    Fees update(UUID id, Fees entity);
+    Fees update(UUID id, FeeRequestDto request);
 
     void delete(UUID id);
 }

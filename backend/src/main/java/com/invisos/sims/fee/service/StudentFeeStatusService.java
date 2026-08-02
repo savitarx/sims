@@ -1,5 +1,6 @@
 package com.invisos.sims.fee.service;
 
+import com.invisos.sims.fee.dto.request.StudentFeeStatusRequestDto;
 import com.invisos.sims.fee.model.StudentFeeStatus;
 
 import java.util.List;
@@ -11,9 +12,11 @@ public interface StudentFeeStatusService {
 
     StudentFeeStatus findById(UUID id);
 
-    StudentFeeStatus create(StudentFeeStatus entity);
+    List<StudentFeeStatus> findByEnrollmentId(UUID enrollmentId);
 
-    StudentFeeStatus update(UUID id, StudentFeeStatus entity);
+    StudentFeeStatus create(StudentFeeStatusRequestDto request);
+
+    StudentFeeStatus update(UUID id, StudentFeeStatusRequestDto request);
 
     void delete(UUID id);
 }

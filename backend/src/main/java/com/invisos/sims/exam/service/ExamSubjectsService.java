@@ -1,5 +1,6 @@
 package com.invisos.sims.exam.service;
 
+import com.invisos.sims.exam.dto.request.ExamSubjectRequestDto;
 import com.invisos.sims.exam.model.ExamSubjects;
 
 import java.util.List;
@@ -11,9 +12,12 @@ public interface ExamSubjectsService {
 
     ExamSubjects findById(UUID id);
 
-    ExamSubjects create(ExamSubjects entity);
+    List<ExamSubjects> findByExamId(UUID examId);
 
-    ExamSubjects update(UUID id, ExamSubjects entity);
+    ExamSubjects create(ExamSubjectRequestDto request);
+
+    ExamSubjects update(UUID id, ExamSubjectRequestDto request);
 
     void delete(UUID id);
+
 }

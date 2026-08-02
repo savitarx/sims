@@ -1,17 +1,13 @@
 package com.invisos.sims.fee.controller;
 
+import com.invisos.sims.fee.dto.request.FeeRequestDto;
+import com.invisos.sims.fee.dto.response.FeeResponseDto;
+import com.invisos.sims.fee.mapper.FeeMapper;
 import com.invisos.sims.fee.model.Fees;
 import com.invisos.sims.fee.service.FeesService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +17,50 @@ import java.util.UUID;
 public class FeesController {
 
     private final FeesService feesService;
+    private final FeeMapper feeMapper;
 
-    public FeesController(FeesService feesService) {
+    public FeesController(FeesService feesService, FeeMapper feeMapper) {
         this.feesService = feesService;
+        this.feeMapper = feeMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Fee API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER
     @GetMapping
-    public ResponseEntity<List<Fees>> getAll() {
-        return ResponseEntity.ok(feesService.findAll());
+    public ResponseEntity<List<FeeResponseDto>> getAll() {
+        return ResponseEntity.ok(feeMapper.toResponseList(feesService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER
     @GetMapping("/{id}")
-    public ResponseEntity<Fees> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(feesService.findById(id));
+    public ResponseEntity<FeeResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(feeMapper.toResponse(feesService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
-    public ResponseEntity<Fees> create(@RequestBody Fees entity) {
-        return ResponseEntity.ok(feesService.create(entity));
+    public ResponseEntity<FeeResponseDto> create(
+            @Valid @RequestBody FeeRequestDto request) {
+
+        Fees created = feesService.create(request);
+        return ResponseEntity.ok(feeMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
-    public ResponseEntity<Fees> update(@PathVariable UUID id, @RequestBody Fees entity) {
-        return ResponseEntity.ok(feesService.update(id, entity));
+    public ResponseEntity<FeeResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody FeeRequestDto request) {
+
+        Fees updated = feesService.update(id, request);
+        return ResponseEntity.ok(feeMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         feesService.delete(id);

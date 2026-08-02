@@ -1,5 +1,6 @@
 package com.invisos.sims.exam.service;
 
+import com.invisos.sims.exam.dto.request.MarkRequestDto;
 import com.invisos.sims.exam.model.Marks;
 
 import java.util.List;
@@ -11,9 +12,14 @@ public interface MarksService {
 
     Marks findById(UUID id);
 
-    Marks create(Marks entity);
+    List<Marks> findByExamSubjectId(UUID examSubjectId);
 
-    Marks update(UUID id, Marks entity);
+    List<Marks> findByEnrollmentId(UUID enrollmentId);
+
+    Marks create(MarkRequestDto request);
+
+    Marks update(UUID id, MarkRequestDto request);
 
     void delete(UUID id);
+
 }

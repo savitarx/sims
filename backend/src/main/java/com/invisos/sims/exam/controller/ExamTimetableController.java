@@ -1,17 +1,13 @@
 package com.invisos.sims.exam.controller;
 
+import com.invisos.sims.exam.dto.request.ExamTimetableRequestDto;
+import com.invisos.sims.exam.dto.response.ExamTimetableResponseDto;
+import com.invisos.sims.exam.mapper.ExamTimetableMapper;
 import com.invisos.sims.exam.model.ExamTimetable;
 import com.invisos.sims.exam.service.ExamTimetableService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,36 +17,57 @@ import java.util.UUID;
 public class ExamTimetableController {
 
     private final ExamTimetableService examTimetableService;
+    private final ExamTimetableMapper examTimetableMapper;
 
-    public ExamTimetableController(ExamTimetableService examTimetableService) {
+    public ExamTimetableController(ExamTimetableService examTimetableService,
+                                   ExamTimetableMapper examTimetableMapper) {
         this.examTimetableService = examTimetableService;
+        this.examTimetableMapper = examTimetableMapper;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @GetMapping("/test")
+    public String test() {
+        return "Exam Timetable API Working!";
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<ExamTimetable>> getAll() {
-        return ResponseEntity.ok(examTimetableService.findAll());
+    public ResponseEntity<List<ExamTimetableResponseDto>> getAll() {
+        return ResponseEntity.ok(examTimetableMapper.toResponseList(examTimetableService.findAll()));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping("/{id}")
-    public ResponseEntity<ExamTimetable> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(examTimetableService.findById(id));
+    public ResponseEntity<ExamTimetableResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(examTimetableMapper.toResponse(examTimetableService.findById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    @GetMapping("/exam/{examId}")
+    public ResponseEntity<List<ExamTimetableResponseDto>> getByExamId(@PathVariable UUID examId) {
+        return ResponseEntity.ok(examTimetableMapper.toResponseList(examTimetableService.findByExamId(examId)));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PostMapping
-    public ResponseEntity<ExamTimetable> create(@RequestBody ExamTimetable entity) {
-        return ResponseEntity.ok(examTimetableService.create(entity));
+    public ResponseEntity<ExamTimetableResponseDto> create(
+            @Valid @RequestBody ExamTimetableRequestDto request) {
+
+        ExamTimetable created = examTimetableService.create(request);
+        return ResponseEntity.ok(examTimetableMapper.toResponse(created));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @PutMapping("/{id}")
-    public ResponseEntity<ExamTimetable> update(@PathVariable UUID id, @RequestBody ExamTimetable entity) {
-        return ResponseEntity.ok(examTimetableService.update(id, entity));
+    public ResponseEntity<ExamTimetableResponseDto> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody ExamTimetableRequestDto request) {
+
+        ExamTimetable updated = examTimetableService.update(id, request);
+        return ResponseEntity.ok(examTimetableMapper.toResponse(updated));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         examTimetableService.delete(id);
