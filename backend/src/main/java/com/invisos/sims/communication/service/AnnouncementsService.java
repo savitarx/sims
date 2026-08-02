@@ -1,5 +1,7 @@
 package com.invisos.sims.communication.service;
 
+import com.invisos.sims.common.enums.AnnouncementPriority;
+import com.invisos.sims.communication.dto.request.AnnouncementRequestDto;
 import com.invisos.sims.communication.model.Announcements;
 
 import java.util.List;
@@ -11,9 +13,11 @@ public interface AnnouncementsService {
 
     Announcements findById(UUID id);
 
-    Announcements create(Announcements entity);
+    List<Announcements> findByPriority(AnnouncementPriority priority);
 
-    Announcements update(UUID id, Announcements entity);
+    Announcements create(AnnouncementRequestDto request);
+
+    Announcements update(UUID id, AnnouncementRequestDto request);
 
     void delete(UUID id);
 }
