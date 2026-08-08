@@ -3,6 +3,7 @@ package com.invisos.sims.academic.service;
 import com.invisos.sims.academic.dto.request.SubjectRequestDto;
 import com.invisos.sims.academic.model.Subjects;
 
+import javax.security.auth.Subject;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,4 +19,5 @@ public interface SubjectsService {
 
     void delete(UUID id);
 
+    Subjects getSubjectEntity(UUID subjectId);
 }

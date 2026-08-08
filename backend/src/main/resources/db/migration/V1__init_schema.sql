@@ -207,7 +207,7 @@ CREATE TABLE student_subjects (
 -- ----------------------------------------------------------------------------
 CREATE TABLE teacher_assignment (
     assignment_id    CHAR(36) NOT NULL,
-    teacher_id       CHAR(36),
+    teacher_id       CHAR(36) NOT NULL,
     academic_year_id CHAR(36),
     section_id       CHAR(36),
     subject_id       CHAR(36),
@@ -215,7 +215,7 @@ CREATE TABLE teacher_assignment (
     created_at       DATETIME(6),
     updated_at       DATETIME(6),
     PRIMARY KEY (assignment_id),
-    CONSTRAINT uk_teacher_section_subject_year UNIQUE (teacher_id, section_id, subject_id, academic_year_id),
+    CONSTRAINT uk_teacher_section_subject_year UNIQUE (section_id, subject_id, academic_year_id),
     CONSTRAINT fk_assignment_teacher FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id),
     CONSTRAINT fk_assignment_academic_year FOREIGN KEY (academic_year_id) REFERENCES academic_years (academic_year_id),
     CONSTRAINT fk_assignment_section FOREIGN KEY (section_id) REFERENCES sections (section_id),

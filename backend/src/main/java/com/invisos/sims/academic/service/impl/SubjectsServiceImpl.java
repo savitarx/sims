@@ -66,4 +66,10 @@ public class SubjectsServiceImpl implements SubjectsService {
         Subjects subject = findById(id);
         subjectsRepository.delete(subject);
     }
+
+    @Override
+    public Subjects getSubjectEntity(UUID id) {
+        return subjectsRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Subject not found with id: " + id));
+    }
 }

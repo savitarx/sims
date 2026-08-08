@@ -130,9 +130,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(
-            UserAlreadyExistsException ex,
+            ResourceAlreadyExistsException ex,
             HttpServletRequest request) {
 
         ErrorResponse errorResponse = new ErrorResponse(

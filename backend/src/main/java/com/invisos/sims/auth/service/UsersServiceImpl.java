@@ -5,7 +5,7 @@ import com.invisos.sims.auth.model.Users;
 import com.invisos.sims.auth.repository.UsersRepository;
 import com.invisos.sims.common.enums.UserStatus;
 import com.invisos.sims.common.exception.ResourceNotFoundException;
-import com.invisos.sims.common.exception.UserAlreadyExistsException;
+import com.invisos.sims.common.exception.ResourceAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Users create(UsersRequestDto usersRequestDto) {
         if (usersRepository.existsByLoginId(usersRequestDto.getLoginId())) {
-            throw new UserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                     "User with login ID '" + usersRequestDto.getLoginId() + "' already exists."
             );
         }
@@ -98,7 +98,9 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public void restore(UUID userId) {
-
+        Users existingUser = usersRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found for the id"+userId));
+        existingUser.setStatus(UserStatus.ACTIVE);
+        usersRepository.save(existingUser);
     }
 
     @Override
