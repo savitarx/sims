@@ -3,6 +3,7 @@ package com.invisos.sims.teacher.service;
 import com.invisos.sims.teacher.dto.TeachersCountResponseDto;
 import com.invisos.sims.teacher.dto.TeachersRequestDto;
 import com.invisos.sims.teacher.dto.TeachersResponseDto;
+import com.invisos.sims.teacher.model.Teachers;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,13 +13,17 @@ import java.util.UUID;
 
 public interface TeachersService {
 
-    List<TeachersResponseDto> findAll(Boolean active);
+    Teachers getActiveTeacherEntity(UUID id);
+
+    List<TeachersResponseDto> findAll(UUID subjectId, Boolean active);
 
     TeachersResponseDto updateStatus(UUID id, boolean active);
 
     TeachersResponseDto restore(UUID id);
 
     TeachersResponseDto findById(UUID id);
+
+
 
     TeachersResponseDto create(TeachersRequestDto entity);
 
@@ -28,11 +33,12 @@ public interface TeachersService {
 
     List<TeachersResponseDto> search(String query);
 
-    List<TeachersResponseDto> findBySubject(String subject);
 
     TeachersCountResponseDto getCount();
 
     List<TeachersResponseDto> createBulk( List<TeachersRequestDto> teachers);
+
+
 
 //    TeachersResponseDto uploadPhoto(UUID id, MultipartFile file);
 }

@@ -6,7 +6,7 @@ import com.invisos.sims.auth.service.UsersService;
 import com.invisos.sims.common.enums.UserRole;
 import com.invisos.sims.common.enums.UserStatus;
 import com.invisos.sims.common.exception.ResourceNotFoundException;
-import com.invisos.sims.common.exception.UserAlreadyExistsException;
+import com.invisos.sims.common.exception.ResourceAlreadyExistsException;
 //import com.invisos.sims.common.storage.S3Service;
 import com.invisos.sims.teacher.dto.TeachersCountResponseDto;
 import com.invisos.sims.teacher.dto.TeachersRequestDto;
@@ -19,7 +19,6 @@ import com.invisos.sims.teacher.repository.TeachersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 //import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -50,20 +49,46 @@ public class TeachersServiceImpl implements TeachersService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TeachersResponseDto> findAll(Boolean active) {
+    public Teachers getActiveTeacherEntity(UUID id) {
+        Teachers teacher = teachersRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found with the given id " + id));
+
+        if (teacher.getStatus() == UserStatus.INACTIVE) {
+            throw new ResourceNotFoundException("Teacher Status is Inactive");
+        }
+
+        return teacher;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TeachersResponseDto> findAll(UUID subjectId, Boolean active) {
+
+        // Default to ACTIVE unless explicitly requested otherwise
+        UserStatus status = (active != null && !active)
+                ? UserStatus.INACTIVE
+                : UserStatus.ACTIVE;
 
         List<Teachers> teachers;
 
-        if (active == null) {
-            log.info("Fetching all teachers (active and inactive).");
-            teachers = teachersRepository.findAll();
-        } else {
-            UserStatus status = active ? UserStatus.ACTIVE : UserStatus.INACTIVE;
-            log.info("Fetching teachers with status: {}", status);
+        if (subjectId == null) {
+            // No subject filter
             teachers = teachersRepository.findByStatus(status);
+
+        } else {
+            // Subject filter + status filter
+            teachers = teachersRepository.findBySubjectIdAndStatus(
+                    subjectId,
+                    status
+            );
         }
 
-        log.info("Retrieved {} teacher(s).", teachers.size());
+        log.info(
+                "Retrieved {} teacher(s) for subjectId={} and status={}",
+                teachers.size(),
+                subjectId,
+                status
+        );
 
         return teacherMapper.toResponseDtoList(teachers);
     }
@@ -102,7 +127,7 @@ public class TeachersServiceImpl implements TeachersService {
             log.warn("Teacher creation failed. Employee ID already exists: {}",
                     teachersRequestDto.getEmployeeId());
 
-            throw new UserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                     "Employee ID already exists.");
         }
 
@@ -191,7 +216,7 @@ public class TeachersServiceImpl implements TeachersService {
         if (!existingTeacher.getEmployeeId().equals(dto.getEmployeeId())
                 && teachersRepository.existsByEmployeeIdAndTeacherIdNot(dto.getEmployeeId(), id)) {
             log.warn("Teacher update failed. Employee ID already exists: {}", dto.getEmployeeId());
-            throw new UserAlreadyExistsException("Employee ID already exists.");
+            throw new ResourceAlreadyExistsException("Employee ID already exists.");
         }
 
         // sync email to Users if changed
@@ -238,11 +263,7 @@ public class TeachersServiceImpl implements TeachersService {
         return teacherMapper.toResponseDtoList(teachers);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<TeachersResponseDto> findBySubject(String subject) {
-        return List.of();
-    }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -285,23 +306,23 @@ public class TeachersServiceImpl implements TeachersService {
 
         for (TeachersRequestDto dto : teacherDtos) {
             if (!employeeIds.add(dto.getEmployeeId())) {
-                throw new UserAlreadyExistsException("Duplicate Employee ID in request: " + dto.getEmployeeId());
+                throw new ResourceAlreadyExistsException("Duplicate Employee ID in request: " + dto.getEmployeeId());
             }
             if (!emails.add(dto.getEmail())) {
-                throw new UserAlreadyExistsException("Duplicate Email in request: " + dto.getEmail());
+                throw new ResourceAlreadyExistsException("Duplicate Email in request: " + dto.getEmail());
             }
         }
 
         List<Teachers> existingTeachers = teachersRepository.findByEmployeeIdIn(employeeIds);
         if (!existingTeachers.isEmpty()) {
             List<String> duplicates = existingTeachers.stream().map(Teachers::getEmployeeId).toList();
-            throw new UserAlreadyExistsException("Employee IDs already exist: " + duplicates);
+            throw new ResourceAlreadyExistsException("Employee IDs already exist: " + duplicates);
         }
 
         List<Users> existingUsers = usersService.findByEmailIn(emails);
         if (!existingUsers.isEmpty()) {
             List<String> duplicateEmails = existingUsers.stream().map(Users::getEmail).toList();
-            throw new UserAlreadyExistsException("Emails already exist: " + duplicateEmails);
+            throw new ResourceAlreadyExistsException("Emails already exist: " + duplicateEmails);
         }
 
         // build all entities first, then batch-insert in one call
@@ -332,6 +353,8 @@ public class TeachersServiceImpl implements TeachersService {
 
         return response;
     }
+
+
 
     @Override
     @Transactional

@@ -27,12 +27,13 @@ public class TeachersController {
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
-    //TODO: CREATE AN SEPARATE ENDPOINT SPECIFIC TO USER SPECIFIC TO RETRIEVE ONLY ACTIVE
+    // TODO: CREATE AN SEPARATE ENDPOINT SPECIFIC TO USER SPECIFIC TO RETRIEVE ONLY ACTIVE
     //NORMAL USERS -> ACTIVE , ADMIN -> INACTIVE
     @GetMapping
     public ResponseEntity<List<TeachersResponseDto>> getAll(
+            @RequestParam(required = false) UUID subjectId,
             @RequestParam(required = false) Boolean active) {
-        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findAll(active));
+        return ResponseEntity.status(HttpStatus.OK).body(teachersService.findAll(subjectId,active));
     }
 
     //    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
@@ -100,7 +101,5 @@ public class TeachersController {
                 .body(teachersService.createBulk(teachersRequest));
     }
 
-    //TO DO: Retrieve the teachers list by the subject details
-    @GetMapping("/by-subject/{subject}") public ResponseEntity<List<TeachersResponseDto>> getBySubject(@PathVariable String subject) {
-        return ResponseEntity.ok(teachersService.findBySubject(subject)); }
+
 }

@@ -29,7 +29,7 @@ import java.util.UUID;
         name = "teacher_assignment",
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_teacher_section_subject_year",
-                columnNames = {"teacher_id", "section_id", "subject_id", "academic_year_id"}
+                columnNames = { "section_id", "subject_id", "academic_year_id"}
         )
 )
 @Getter
@@ -45,7 +45,7 @@ public class TeacherAssignment extends BaseEntity {
     private UUID assignmentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id",nullable = false)
     private Teachers teacher;
 
     @ManyToOne(fetch = FetchType.LAZY)

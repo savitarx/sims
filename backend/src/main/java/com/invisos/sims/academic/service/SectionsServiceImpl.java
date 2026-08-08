@@ -2,6 +2,7 @@ package com.invisos.sims.academic.service;
 
 import com.invisos.sims.academic.model.Sections;
 import com.invisos.sims.academic.repository.SectionsRepository;
+import com.invisos.sims.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class SectionsServiceImpl implements SectionsService {
     @Override
     public Sections findById(UUID id) {
         // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+        return sectionsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Section with given id not found"));
+//        throw new UnsupportedOperationException("TODO");
     }
 
     @Override

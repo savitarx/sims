@@ -42,5 +42,17 @@ public interface TeachersRepository extends JpaRepository<Teachers, UUID> {
     List<Teachers> findByEmployeeIdIn(Set<String> employeeIds);
 
 
+
+    @Query("""
+    SELECT DISTINCT t
+    FROM Teachers t
+    JOIN TeacherAssignment ta ON ta.teacher = t
+    WHERE ta.subject.subjectId = :subjectId
+      AND t.status = :status
+""")
+    List<Teachers> findBySubjectIdAndStatus(
+            UUID subjectId,
+            UserStatus status
+    );
 }
 
