@@ -1,5 +1,8 @@
 package com.invisos.sims.attendance.service;
 
+import com.invisos.sims.attendance.dto.ClassTimeTableBulkRequestDto;
+import com.invisos.sims.attendance.dto.ClassTimeTableRequestDto;
+import com.invisos.sims.attendance.dto.ClassTimeTableResponseDto;
 import com.invisos.sims.attendance.model.ClassTimetable;
 
 import java.util.List;
@@ -7,13 +10,19 @@ import java.util.UUID;
 
 public interface ClassTimetableService {
 
-    List<ClassTimetable> findAll();
 
-    ClassTimetable findById(UUID id);
+    ClassTimetable getClassTimeTableEntity(UUID id);
 
-    ClassTimetable create(ClassTimetable entity);
+    List<ClassTimeTableResponseDto> saveBulk(List<ClassTimeTableBulkRequestDto> requests);
 
-    ClassTimetable update(UUID id, ClassTimetable entity);
+    ClassTimeTableResponseDto findById(UUID id);
+
+    ClassTimeTableResponseDto create(ClassTimeTableRequestDto entity);
+
+    ClassTimeTableResponseDto update(UUID id, ClassTimeTableRequestDto entity);
+
 
     void delete(UUID id);
+
+    List<ClassTimeTableResponseDto> findAll(UUID sectionId, UUID classId, UUID academicYearId);
 }

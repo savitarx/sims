@@ -1,17 +1,13 @@
 package com.invisos.sims.attendance.controller;
 
-import com.invisos.sims.attendance.model.ClassTimetable;
+import com.invisos.sims.attendance.dto.ClassTimeTableBulkRequestDto;
+import com.invisos.sims.attendance.dto.ClassTimeTableRequestDto;
+import com.invisos.sims.attendance.dto.ClassTimeTableResponseDto;
 import com.invisos.sims.attendance.service.ClassTimetableService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,34 +22,43 @@ public class ClassTimetableController {
         this.classTimetableService = classTimetableService;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping
-    public ResponseEntity<List<ClassTimetable>> getAll() {
-        return ResponseEntity.ok(classTimetableService.findAll());
+    public ResponseEntity<List<ClassTimeTableResponseDto>> getAll(@RequestParam(required = false) UUID sectionId,@RequestParam(required = false) UUID classId, @RequestParam UUID academicYearId) {
+        return ResponseEntity.status(HttpStatus.OK).body(classTimetableService.findAll(sectionId,classId,academicYearId));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
-    public ResponseEntity<ClassTimetable> getById(@PathVariable UUID id) {
+    public ResponseEntity<ClassTimeTableResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(classTimetableService.findById(id));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
-    public ResponseEntity<ClassTimetable> create(@RequestBody ClassTimetable entity) {
-        return ResponseEntity.ok(classTimetableService.create(entity));
+    public ResponseEntity<ClassTimeTableResponseDto> create(@RequestBody ClassTimeTableRequestDto entity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(classTimetableService.create(entity));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
-    public ResponseEntity<ClassTimetable> update(@PathVariable UUID id, @RequestBody ClassTimetable entity) {
+    public ResponseEntity<ClassTimeTableResponseDto> update(@PathVariable UUID id, @RequestBody ClassTimeTableRequestDto entity) {
         return ResponseEntity.ok(classTimetableService.update(id, entity));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         classTimetableService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/bulk")
+    public ResponseEntity<List<ClassTimeTableResponseDto>> saveBulk(
+            @RequestBody  List< @Valid ClassTimeTableBulkRequestDto> requests) {
+
+        return ResponseEntity.ok(
+                classTimetableService.saveBulk(requests)
+        );
     }
 }
