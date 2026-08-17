@@ -1,16 +1,12 @@
 package com.invisos.sims.academic.controller;
 
+import com.invisos.sims.academic.dto.request.SectionRequestDto;
+import com.invisos.sims.academic.dto.response.SectionResponseDto;
 import com.invisos.sims.academic.model.Sections;
 import com.invisos.sims.academic.service.SectionsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -26,31 +22,36 @@ public class SectionsController {
         this.sectionsService = sectionsService;
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping
-    public ResponseEntity<List<Sections>> getAll() {
-        return ResponseEntity.ok(sectionsService.findAll());
+    public ResponseEntity<List<SectionResponseDto>> getAll(@RequestParam UUID academicYearId,@RequestParam(required = false) UUID classId) {
+        return ResponseEntity.status(HttpStatus.OK).body(sectionsService.findAll(academicYearId,classId));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @GetMapping("/{id}")
-    public ResponseEntity<Sections> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(sectionsService.findById(id));
+    public ResponseEntity<SectionResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(sectionsService.findById(id));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PostMapping
-    public ResponseEntity<Sections> create(@RequestBody Sections entity) {
-        return ResponseEntity.ok(sectionsService.create(entity));
+    public ResponseEntity<SectionResponseDto> create(@RequestBody SectionRequestDto entity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sectionsService.create(entity));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+    @PatchMapping("/{sectionId}/class-teacher/{teacherId}")
+    public ResponseEntity<SectionResponseDto> assignClassTeacher(@PathVariable UUID sectionId, @PathVariable UUID teacherId){
+        return ResponseEntity.status(HttpStatus.OK).body(sectionsService.assignClassTeacher(sectionId,teacherId));
+    }
+
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @PutMapping("/{id}")
-    public ResponseEntity<Sections> update(@PathVariable UUID id, @RequestBody Sections entity) {
+    public ResponseEntity<SectionResponseDto> update(@PathVariable UUID id, @RequestBody SectionRequestDto entity) {
         return ResponseEntity.ok(sectionsService.update(id, entity));
     }
 
-    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
+//    @PreAuthorize("isAuthenticated()") // TODO: confirm role for this endpoint
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         sectionsService.delete(id);

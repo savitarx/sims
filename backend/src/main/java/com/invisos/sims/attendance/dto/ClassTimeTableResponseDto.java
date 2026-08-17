@@ -27,6 +27,7 @@ public class ClassTimeTableResponseDto {
     private LocalTime endTime;
 
     private UUID subjectId;
+    private String className;
     private String subjectName;
 
     private UUID teacherId;

@@ -15,6 +15,7 @@ import java.util.List;
 public interface ClassTimeTableMapper {
 
     @Mapping(target = "sectionId",source = "section.sectionId")
+    @Mapping(target="className",source = "section.schoolClass.className")
     @Mapping(target = "sectionName",source = "section.sectionName")
     @Mapping(target = "subjectId",source = "subject.subjectId")
     @Mapping(target = "subjectName",source="subject.subjectName")

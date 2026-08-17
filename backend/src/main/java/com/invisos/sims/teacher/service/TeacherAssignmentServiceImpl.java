@@ -42,7 +42,7 @@ public class TeacherAssignmentServiceImpl implements TeacherAssignmentService {
     private final SubjectsService subjectsService;
     private final AdminStaffService adminStaffService;
     private final TeachersAssignmentMapper mapper;
-    private final TeacherMapper teacherMapper;
+
 
     public TeacherAssignmentServiceImpl(TeacherAssignmentRepository teacherAssignmentRepository, TeachersService teachersService, AcademicYearsService academicYearsService, SectionsService sectionsService, SubjectsService subjectsService, AdminStaffService adminStaffService, TeachersAssignmentMapper mapper, TeacherMapper teacherMapper) {
         this.teacherAssignmentRepository = teacherAssignmentRepository;
@@ -52,7 +52,6 @@ public class TeacherAssignmentServiceImpl implements TeacherAssignmentService {
         this.subjectsService = subjectsService;
         this.adminStaffService = adminStaffService;
         this.mapper = mapper;
-        this.teacherMapper = teacherMapper;
     }
 
 
@@ -94,7 +93,7 @@ public class TeacherAssignmentServiceImpl implements TeacherAssignmentService {
 
         AcademicYears academicYear = academicYearsService.findById(dto.getAcademicYearId());
 
-        Sections section = sectionsService.findById(dto.getSectionId());
+        Sections section = sectionsService.getSectionEntity(dto.getSectionId());
 
         Subjects subject = subjectsService.findById(dto.getSubjectId());
 
@@ -131,7 +130,7 @@ public class TeacherAssignmentServiceImpl implements TeacherAssignmentService {
 
         AcademicYears academicYear = academicYearsService.findById(dto.getAcademicYearId());
 
-        Sections section = sectionsService.findById(dto.getSectionId());
+        Sections section = sectionsService.getSectionEntity(dto.getSectionId());
 
         Subjects subject = subjectsService.findById(dto.getSubjectId());
 

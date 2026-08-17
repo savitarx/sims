@@ -26,7 +26,7 @@ public class AcademicYearsServiceImpl implements AcademicYearsService {
     @Override
     public AcademicYears findById(UUID id) {
         // TODO: implement
-        return academicYearsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Academic year with given id not found"));
+        return academicYearsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Academic year with given id not found "+id));
 //        throw new UnsupportedOperationException("TODO");
     }
 

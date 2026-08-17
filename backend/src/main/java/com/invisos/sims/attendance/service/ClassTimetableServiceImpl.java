@@ -70,7 +70,7 @@ public class ClassTimetableServiceImpl implements ClassTimetableService {
 
         log.info("Creating timetable entry for sectionId={}, day={}, periodNumber={}", dto.getSectionId(), dto.getDay(), dto.getPeriodNumber());
 
-        Sections section = sectionsService.findById(dto.getSectionId());
+        Sections section = sectionsService.getSectionEntity(dto.getSectionId());
 
         Subjects subject = subjectsService.getSubjectEntity(dto.getSubjectId());
 
@@ -110,7 +110,7 @@ public class ClassTimetableServiceImpl implements ClassTimetableService {
 
         ClassTimetable existingTimetable = getClassTimeTableEntity(id);
 
-        Sections section = sectionsService.findById(dto.getSectionId());
+        Sections section = sectionsService.getSectionEntity(dto.getSectionId());
 
         Subjects subject = subjectsService.getSubjectEntity(dto.getSubjectId());
 
@@ -236,7 +236,7 @@ public class ClassTimetableServiceImpl implements ClassTimetableService {
 
 
             /* 3. Retrieve related entities*/
-            Sections section = sectionsService.findById(dto.getSectionId());
+            Sections section = sectionsService.getSectionEntity(dto.getSectionId());
 
             Subjects subject = subjectsService.getSubjectEntity(dto.getSubjectId());
 
