@@ -4,15 +4,7 @@ import com.invisos.sims.common.entity.BaseEntity;
 
 import com.invisos.sims.admin.model.AdminStaff;
 import com.invisos.sims.teacher.model.Teachers;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +14,19 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "sections")
+@Table(
+        name = "sections",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_sections_class_year_name",
+                        columnNames = {
+                                "class_id",
+                                "academic_year_id",
+                                "section_name"
+                        }
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,14 +40,14 @@ public class Sections extends BaseEntity {
     private UUID sectionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id")
+    @JoinColumn(name = "class_id", nullable = false)
     private Classes schoolClass;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "academic_year_id")
+    @JoinColumn(name = "academic_year_id", nullable = false)
     private AcademicYears academicYear;
 
-    @Column(name = "section_name")
+    @Column(name = "section_name", nullable = false)
     private String sectionName;
 
     @ManyToOne(fetch = FetchType.LAZY)

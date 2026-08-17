@@ -6,7 +6,8 @@
 -- ----------------------------------------------------------------------------
 -- auth
 -- ----------------------------------------------------------------------------
-CREATE TABLE users (
+CREATE TABLE users
+(
     user_id       CHAR(36) NOT NULL,
     login_id      VARCHAR(255),
     password_hash VARCHAR(255),
@@ -22,7 +23,8 @@ CREATE TABLE users (
 -- ----------------------------------------------------------------------------
 -- academic (no FKs)
 -- ----------------------------------------------------------------------------
-CREATE TABLE academic_years (
+CREATE TABLE academic_years
+(
     academic_year_id CHAR(36) NOT NULL,
     year_label       VARCHAR(255),
     start_date       DATE,
@@ -33,7 +35,8 @@ CREATE TABLE academic_years (
     PRIMARY KEY (academic_year_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE classes (
+CREATE TABLE classes
+(
     class_id   CHAR(36) NOT NULL,
     class_name VARCHAR(255),
     created_at DATETIME(6),
@@ -41,7 +44,8 @@ CREATE TABLE classes (
     PRIMARY KEY (class_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE subjects (
+CREATE TABLE subjects
+(
     subject_id   CHAR(36) NOT NULL,
     subject_name VARCHAR(255),
     subject_code VARCHAR(255),
@@ -54,7 +58,8 @@ CREATE TABLE subjects (
 -- ----------------------------------------------------------------------------
 -- admin (FK -> users, self)
 -- ----------------------------------------------------------------------------
-CREATE TABLE admin_staff (
+CREATE TABLE admin_staff
+(
     admin_id    CHAR(36) NOT NULL,
     user_id     CHAR(36),
     name        VARCHAR(255),
@@ -72,7 +77,8 @@ CREATE TABLE admin_staff (
 -- ----------------------------------------------------------------------------
 -- teacher (FK -> users, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE teachers (
+CREATE TABLE teachers
+(
     teacher_id    CHAR(36) NOT NULL,
     user_id       CHAR(36),
     employee_id   VARCHAR(255),
@@ -96,7 +102,8 @@ CREATE TABLE teachers (
 -- ----------------------------------------------------------------------------
 -- student (FK -> users, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE students (
+CREATE TABLE students
+(
     student_id        CHAR(36) NOT NULL,
     user_id           CHAR(36),
     admission_number  VARCHAR(255),
@@ -121,26 +128,60 @@ CREATE TABLE students (
 -- ----------------------------------------------------------------------------
 -- academic.sections (FK -> classes, academic_years, teachers, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE sections (
-    section_id       CHAR(36) NOT NULL,
-    class_id         CHAR(36),
-    academic_year_id CHAR(36),
-    section_name     VARCHAR(255),
+-- CREATE TABLE sections (
+--     section_id       CHAR(36) NOT NULL,
+--     class_id         CHAR(36),
+--     academic_year_id CHAR(36),
+--     section_name     VARCHAR(255),
+--     class_teacher_id CHAR(36),
+--     assigned_by      CHAR(36),
+--     created_at       DATETIME(6),
+--     updated_at       DATETIME(6),
+--     PRIMARY KEY (section_id),
+--     CONSTRAINT fk_sections_class FOREIGN KEY (class_id) REFERENCES classes (class_id),
+--     CONSTRAINT fk_sections_academic_year FOREIGN KEY (academic_year_id) REFERENCES academic_years (academic_year_id),
+--     CONSTRAINT fk_sections_class_teacher FOREIGN KEY (class_teacher_id) REFERENCES teachers (teacher_id),
+--     CONSTRAINT fk_sections_assigned_by FOREIGN KEY (assigned_by) REFERENCES admin_staff (admin_id)
+-- ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE sections
+(
+    section_id       CHAR(36)     NOT NULL,
+    class_id         CHAR(36)     NOT NULL,
+    academic_year_id CHAR(36)     NOT NULL,
+    section_name     VARCHAR(255) NOT NULL,
     class_teacher_id CHAR(36),
     assigned_by      CHAR(36),
     created_at       DATETIME(6),
     updated_at       DATETIME(6),
+
     PRIMARY KEY (section_id),
-    CONSTRAINT fk_sections_class FOREIGN KEY (class_id) REFERENCES classes (class_id),
-    CONSTRAINT fk_sections_academic_year FOREIGN KEY (academic_year_id) REFERENCES academic_years (academic_year_id),
-    CONSTRAINT fk_sections_class_teacher FOREIGN KEY (class_teacher_id) REFERENCES teachers (teacher_id),
-    CONSTRAINT fk_sections_assigned_by FOREIGN KEY (assigned_by) REFERENCES admin_staff (admin_id)
+
+    CONSTRAINT uk_sections_class_year_name
+        UNIQUE (class_id, academic_year_id, section_name),
+
+    CONSTRAINT fk_sections_class
+        FOREIGN KEY (class_id)
+            REFERENCES classes (class_id),
+
+    CONSTRAINT fk_sections_academic_year
+        FOREIGN KEY (academic_year_id)
+            REFERENCES academic_years (academic_year_id),
+
+    CONSTRAINT fk_sections_class_teacher
+        FOREIGN KEY (class_teacher_id)
+            REFERENCES teachers (teacher_id),
+
+    CONSTRAINT fk_sections_assigned_by
+        FOREIGN KEY (assigned_by)
+            REFERENCES admin_staff (admin_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- ----------------------------------------------------------------------------
 -- admin.principal_tenure (FK -> admin_staff, academic_years)
 -- ----------------------------------------------------------------------------
-CREATE TABLE principal_tenure (
+CREATE TABLE principal_tenure
+(
     tenure_id        CHAR(36) NOT NULL,
     admin_id         CHAR(36),
     academic_year_id CHAR(36),
@@ -156,7 +197,8 @@ CREATE TABLE principal_tenure (
 -- ----------------------------------------------------------------------------
 -- student.parents (FK -> students)
 -- ----------------------------------------------------------------------------
-CREATE TABLE parents (
+CREATE TABLE parents
+(
     parent_id     CHAR(36) NOT NULL,
     student_id    CHAR(36),
     name          VARCHAR(255),
@@ -172,7 +214,8 @@ CREATE TABLE parents (
 -- ----------------------------------------------------------------------------
 -- student.student_enrollment (FK -> students, academic_years, sections)
 -- ----------------------------------------------------------------------------
-CREATE TABLE student_enrollment (
+CREATE TABLE student_enrollment
+(
     enrollment_id    CHAR(36) NOT NULL,
     student_id       CHAR(36),
     academic_year_id CHAR(36),
@@ -191,7 +234,8 @@ CREATE TABLE student_enrollment (
 -- ----------------------------------------------------------------------------
 -- student.student_subjects (FK -> student_enrollment, subjects)
 -- ----------------------------------------------------------------------------
-CREATE TABLE student_subjects (
+CREATE TABLE student_subjects
+(
     student_subject_id CHAR(36) NOT NULL,
     enrollment_id      CHAR(36),
     subject_id         CHAR(36),
@@ -205,7 +249,8 @@ CREATE TABLE student_subjects (
 -- ----------------------------------------------------------------------------
 -- teacher.teacher_assignment (FK -> teachers, academic_years, sections, subjects, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE teacher_assignment (
+CREATE TABLE teacher_assignment
+(
     assignment_id    CHAR(36) NOT NULL,
     teacher_id       CHAR(36) NOT NULL,
     academic_year_id CHAR(36),
@@ -226,7 +271,8 @@ CREATE TABLE teacher_assignment (
 -- ----------------------------------------------------------------------------
 -- attendance.attendance (FK -> student_enrollment, teachers)
 -- ----------------------------------------------------------------------------
-CREATE TABLE attendance (
+CREATE TABLE attendance
+(
     attendance_id CHAR(36) NOT NULL,
     enrollment_id CHAR(36),
     att_date      DATE,
@@ -246,7 +292,8 @@ CREATE TABLE attendance (
 -- ----------------------------------------------------------------------------
 -- attendance.class_timetable (FK -> sections, subjects, teachers)
 -- ----------------------------------------------------------------------------
-CREATE TABLE class_timetable (
+CREATE TABLE class_timetable
+(
     timetable_id  CHAR(36) NOT NULL,
     section_id    CHAR(36),
     `day`         VARCHAR(255),
@@ -266,7 +313,8 @@ CREATE TABLE class_timetable (
 -- ----------------------------------------------------------------------------
 -- exam.exams (FK -> academic_years, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE exams (
+CREATE TABLE exams
+(
     exam_id          CHAR(36) NOT NULL,
     academic_year_id CHAR(36),
     exam_name        VARCHAR(255),
@@ -282,7 +330,8 @@ CREATE TABLE exams (
 -- ----------------------------------------------------------------------------
 -- exam.exam_subjects (FK -> exams, subjects, classes)
 -- ----------------------------------------------------------------------------
-CREATE TABLE exam_subjects (
+CREATE TABLE exam_subjects
+(
     exam_subject_id CHAR(36) NOT NULL,
     exam_id         CHAR(36),
     subject_id      CHAR(36),
@@ -300,7 +349,8 @@ CREATE TABLE exam_subjects (
 -- ----------------------------------------------------------------------------
 -- exam.exam_timetable (FK -> exam_subjects)
 -- ----------------------------------------------------------------------------
-CREATE TABLE exam_timetable (
+CREATE TABLE exam_timetable
+(
     exam_timetable_id CHAR(36) NOT NULL,
     exam_subject_id   CHAR(36),
     exam_date         DATE,
@@ -314,7 +364,8 @@ CREATE TABLE exam_timetable (
 -- ----------------------------------------------------------------------------
 -- exam.marks (FK -> student_enrollment, exam_subjects, teachers)
 -- ----------------------------------------------------------------------------
-CREATE TABLE marks (
+CREATE TABLE marks
+(
     mark_id         CHAR(36) NOT NULL,
     enrollment_id   CHAR(36),
     exam_subject_id CHAR(36),
@@ -332,7 +383,8 @@ CREATE TABLE marks (
 -- ----------------------------------------------------------------------------
 -- fee.fees (FK -> classes, academic_years)
 -- ----------------------------------------------------------------------------
-CREATE TABLE fees (
+CREATE TABLE fees
+(
     fee_id           CHAR(36) NOT NULL,
     class_id         CHAR(36),
     academic_year_id CHAR(36),
@@ -348,7 +400,8 @@ CREATE TABLE fees (
 -- ----------------------------------------------------------------------------
 -- fee.student_fee_status (FK -> student_enrollment, fees, teachers)
 -- ----------------------------------------------------------------------------
-CREATE TABLE student_fee_status (
+CREATE TABLE student_fee_status
+(
     student_fee_status_id CHAR(36) NOT NULL,
     enrollment_id         CHAR(36),
     fee_id                CHAR(36),
@@ -366,7 +419,8 @@ CREATE TABLE student_fee_status (
 -- ----------------------------------------------------------------------------
 -- communication.events (FK -> classes nullable, admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE events (
+CREATE TABLE events
+(
     event_id    CHAR(36) NOT NULL,
     title       VARCHAR(255),
     description VARCHAR(255),
@@ -384,7 +438,8 @@ CREATE TABLE events (
 -- ----------------------------------------------------------------------------
 -- communication.announcements (FK -> admin_staff)
 -- ----------------------------------------------------------------------------
-CREATE TABLE announcements (
+CREATE TABLE announcements
+(
     announcement_id CHAR(36) NOT NULL,
     title           VARCHAR(255),
     message         VARCHAR(255),

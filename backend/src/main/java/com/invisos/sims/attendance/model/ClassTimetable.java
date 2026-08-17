@@ -4,16 +4,9 @@ import com.invisos.sims.common.entity.BaseEntity;
 
 import com.invisos.sims.academic.model.Sections;
 import com.invisos.sims.academic.model.Subjects;
+import com.invisos.sims.common.enums.DayOfWeek;
 import com.invisos.sims.teacher.model.Teachers;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +35,8 @@ public class ClassTimetable extends BaseEntity {
     private Sections section;
 
     @Column(name = "day")
-    private String day;
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek day;
 
     @Column(name = "period_number")
     private Integer periodNumber;

@@ -2,6 +2,7 @@ package com.invisos.sims.academic.service;
 
 import com.invisos.sims.academic.model.Classes;
 import com.invisos.sims.academic.repository.ClassesRepository;
+import com.invisos.sims.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +25,7 @@ public class ClassesServiceImpl implements ClassesService {
 
     @Override
     public Classes findById(UUID id) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+        return classesRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Class not found with the id "+id));
     }
 
     @Override

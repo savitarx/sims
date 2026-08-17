@@ -70,7 +70,7 @@ public class TeachersController {
         return ResponseEntity.ok(teachersService.updateStatus(id, active));
     }
 
-    @PatchMapping("/{id}/restore")
+    @PatchMapping("/restore/{id}")
     public ResponseEntity<TeachersResponseDto> restore(@PathVariable UUID id) {
         return ResponseEntity.ok(teachersService.restore(id));
     }
