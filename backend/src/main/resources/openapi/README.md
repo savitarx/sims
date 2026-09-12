@@ -1,182 +1,62 @@
-# OpenAPI Specifications
+# SIMS API Documentation
 
-This directory contains OpenAPI 3.0 specifications for the SIMS backend APIs.
+## The spec is now generated from the code
 
-## Files
+`springdoc-openapi` (3.x, the Spring Boot 4 line) is on the classpath, so the
+OpenAPI document is produced from the actual controllers, DTOs and Bean
+Validation annotations. It cannot drift from the implementation the way a
+hand-maintained yaml does.
 
-- **exam-subjects-openapi.yaml** — Exam Subjects API (subject mappings to exams)
-- **fees-openapi.yaml** — Fees Management API (fees + student fee payment status)
+With the app running on port 8081:
 
-## Using These Specs
+| What | Where |
+|---|---|
+| Swagger UI | http://localhost:8081/swagger-ui.html |
+| OpenAPI JSON | http://localhost:8081/v3/api-docs |
+| OpenAPI YAML | http://localhost:8081/v3/api-docs.yaml |
 
-### With Swagger UI
+To save a snapshot for a client or for source control:
 
-To view these specs in an interactive API explorer, you have several options:
-
-#### Option 1: Online Swagger Editor
-1. Go to https://editor.swagger.io
-2. Click **File** → **Import URL**
-3. Paste the path to your spec file (e.g., raw GitHub URL or local file served via HTTP)
-
-#### Option 2: Local Swagger UI (Spring Boot Integration)
-
-Add to `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>org.springdoc</groupId>
-    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.0.2</version>
-</dependency>
+```bash
+curl http://localhost:8081/v3/api-docs.yaml -o sims-openapi.yaml
 ```
 
-Then configure in `application.properties`:
+Both paths are permitted in `SecurityConfig` while authentication is still being
+built, so no token is needed to read them yet.
 
-```properties
-springdoc.api-docs.path=/v3/api-docs
-springdoc.swagger-ui.path=/swagger-ui.html
-springdoc.swagger-ui.urls[0].name=Exam Subjects
-springdoc.swagger-ui.urls[0].url=/v3/api-docs/exam-subjects
-springdoc.swagger-ui.urls[1].name=Fees
-springdoc.swagger-ui.urls[1].url=/v3/api-docs/fees
-```
+## SIMS-OpenAPI-Spec.yaml
 
-Access at: `http://localhost:8081/swagger-ui.html`
+That file is a Bruno collection export and predates the exam/fee/communication
+redesign — it still documents the old flat-UUID responses and carries no schemas.
+Treat the generated document above as the source of truth; keep the Bruno file
+only if it is still in use as a request collection.
 
-### With Postman
+## Conventions the generated spec reflects
 
-1. **New Collection** → **API**
-2. Choose **OpenAPI** as the specification format
-3. Paste the contents of the spec file or upload it
-4. Postman auto-generates all requests
-
-### With Other Tools
-
-- **Insomnia**: File → Import → Raw text → Paste spec
-- **VS Code**: Install **REST Client** extension, use `@requests.http` files
-- **ReDoc**: https://redoc.ly (for beautiful documentation)
-
-## Spec Coverage
-
-### Exam Subjects API
-
-**Base path**: `/api/v1/exam-subjects`
-
-- `GET /` — List all exam subjects
-- `POST /` — Create exam subject mapping
-- `GET /{id}` — Get exam subject by ID
-- `PUT /{id}` — Update exam subject (blocked if exam is published)
-- `DELETE /{id}` — Delete exam subject (blocked if exam is published)
-- `GET /exam/{examId}` — List subjects for an exam
-
-**Data Model**:
-- `examSubjectId` (UUID, PK)
-- `examId` (UUID, FK)
-- `subjectId` (UUID, FK)
-- `classId` (UUID, FK)
-- `maxMarks` (int, ≥1)
-- `createdAt`, `updatedAt` (Instant)
-
-**Business Rules**:
-- Cannot add subjects to a published exam → `409 Conflict`
-- Cannot modify subjects of a published exam → `409 Conflict`
-- Cannot delete subjects from a published exam → `409 Conflict`
-- Duplicate mapping (same exam/subject/class) → `409 Conflict`
-
-### Fees API
-
-**Base path**: `/api/v1/fees`
-
-- `GET /` — List all fee structures
-- `POST /` — Create fee structure
-- `GET /{id}` — Get fee by ID
-- `PUT /{id}` — Update fee structure
-- `DELETE /{id}` — Delete fee structure
-
-**Data Model**:
-- `feeId` (UUID, PK)
-- `classId` (UUID, FK)
-- `academicYearId` (UUID, FK)
-- `termName` (string)
-- `createdAt`, `updatedAt` (Instant)
-
-### Student Fee Status API
-
-**Base path**: `/api/v1/student-fee-status`
-
-- `GET /` — List all student fee statuses
-- `POST /` — Create fee status record
-- `GET /{id}` — Get fee status by ID
-- `PUT /{id}` — Update fee status (e.g., mark as PAID)
-- `DELETE /{id}` — Delete fee status
-- `GET /enrollment/{enrollmentId}` — Get all fees for a student
-
-**Data Model**:
-- `studentFeeStatusId` (UUID, PK)
-- `enrollmentId` (UUID, FK)
-- `feeId` (UUID, FK)
-- `status` (enum: PAID | PARTIAL | NOT_PAID)
-- `updatedById` (UUID, FK to Teacher)
-- `createdAt`, `updatedAt` (Instant)
-
-**Unique Constraint**:
-- One row per (enrollmentId, feeId) pair → `409 Conflict` on duplicate
-
-## Authentication
-
-All endpoints require **Bearer JWT token** in the Authorization header:
+**Pagination.** List endpoints return a Spring `Page`:
 
 ```
-Authorization: Bearer <jwt-token>
+GET /api/v1/exams?page=0&size=20&sort=createdAt,desc
 ```
 
-Obtain token from `/api/v1/auth/login` (not yet implemented).
+The response carries `content`, `totalElements`, `totalPages`, `number`, `size`.
 
-## Error Responses
+**Nested business objects.** Responses embed what a screen needs rather than bare
+foreign keys — `subject`, `student`, `schoolClass`, `createdBy`, `updatedBy` are
+objects with ids *and* names. The old flat `*Id` fields are still present but
+marked `@Deprecated`; they come out once the React app has migrated.
 
-All errors return a standard format:
+**Errors.** Every business rule maps to a real status code via
+`GlobalExceptionHandler`:
 
-```json
-{
-  "timestamp": "2026-07-28T10:30:00Z",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Validation failed",
-  "path": "/api/v1/exam-subjects",
-  "fieldErrors": {
-    "maxMarks": "must be at least 1"
-  }
-}
-```
+| Status | Meaning | Exception |
+|---|---|---|
+| 400 | cross-field request problem | `InvalidRequestException` |
+| 400 | bean validation failure (with `fieldErrors`) | `MethodArgumentNotValidException` |
+| 404 | unknown id | `ResourceNotFoundException` |
+| 409 | uniqueness violation | `DuplicateResourceException` |
+| 409 | state forbids the operation | `BusinessRuleViolationException` |
 
-### Status Codes
-
-- **200 OK** — Successful GET, POST, PUT
-- **204 No Content** — Successful DELETE
-- **400 Bad Request** — Validation failed, see fieldErrors
-- **401 Unauthorized** — Missing or invalid JWT token
-- **404 Not Found** — Resource not found
-- **409 Conflict** — Business rule violation (duplicate, state mismatch)
-- **500 Internal Server Error** — Unexpected error
-
-## Implementation Notes
-
-### For Backend Developers
-
-The OpenAPI specs are **documentation only** at this stage. They describe the intended API contract.
-
-To auto-generate from code annotations, follow the Swagger UI section above.
-
-### For Frontend/API Consumers
-
-These specs represent the **contract you should build against**. The actual API will follow these contracts closely.
-
-**Note**: `/api/v1/exams` is currently open in SecurityConfig for testing. `ExamSubjects` and Fees require JWT auth but may not have an authentication endpoint yet.
-
-## Future Enhancements
-
-- [ ] Add Spring Doc annotations (@Operation, @Schema) to controllers for auto-generation
-- [ ] Include example request/response payloads in each endpoint
-- [ ] Add rate-limiting headers and response examples
-- [ ] Document batch operations (if planned)
-- [ ] Add @deprecated markers for any old endpoints
+**Actor fields.** Requests currently carry `actorId` (admin) or `enteredById` /
+`updatedById` (teacher) because authentication is still in progress. Each is
+marked with a TODO in its DTO and will be replaced by the JWT principal.

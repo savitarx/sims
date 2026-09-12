@@ -28,6 +28,11 @@ public class MarkRequestDto {
     @DecimalMin(value = "0.0", message = "Marks obtained cannot be negative")
     private BigDecimal marksObtained;
 
+    /**
+     * Teacher performing the action: recorded as enteredBy on create and as
+     * updatedBy on update.
+     * TODO: drop once authentication lands and derive from the JWT principal.
+     */
     @NotNull(message = "Entered by (teacher) is required")
     private UUID enteredById;
 }

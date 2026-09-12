@@ -1,5 +1,7 @@
 package com.invisos.sims.communication.dto.response;
 
+import com.invisos.sims.common.dto.summary.ActorSummaryDto;
+import com.invisos.sims.common.dto.summary.ClassSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,12 +29,27 @@ public class EventResponseDto {
 
     private LocalDate endDate;
 
-    // Null means the event is school-wide.
-    private UUID classId;
+    /** Null means the event is school-wide. */
+    private ClassSummaryDto schoolClass;
 
-    private UUID createdById;
+    /** True when the event applies to the whole school. */
+    private boolean schoolWide;
+
+    private ActorSummaryDto createdBy;
+
+    private ActorSummaryDto updatedBy;
 
     private Instant createdAt;
 
     private Instant updatedAt;
+
+    // --- deprecated flat ids, retained for one release ---
+
+    /** @deprecated use {@link #schoolClass}. */
+    @Deprecated
+    private UUID classId;
+
+    /** @deprecated use {@link #createdBy}. */
+    @Deprecated
+    private UUID createdById;
 }

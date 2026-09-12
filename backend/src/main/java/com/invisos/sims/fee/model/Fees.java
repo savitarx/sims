@@ -4,6 +4,7 @@ import com.invisos.sims.common.entity.BaseEntity;
 
 import com.invisos.sims.academic.model.AcademicYears;
 import com.invisos.sims.academic.model.Classes;
+import com.invisos.sims.admin.model.AdminStaff;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -45,4 +46,8 @@ public class Fees extends BaseEntity {
 
     @Column(name = "term_name")
     private String termName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private AdminStaff updatedBy;
 }

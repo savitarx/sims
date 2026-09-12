@@ -26,4 +26,11 @@ public class ExamTimetableRequestDto {
 
     @NotNull(message = "Exam time is required")
     private LocalTime examTime;
+
+    /**
+     * Admin staff performing the action, recorded as updatedBy.
+     * TODO: drop once authentication lands and derive from the JWT principal.
+     */
+    @NotNull(message = "Acting admin id is required")
+    private UUID actorId;
 }

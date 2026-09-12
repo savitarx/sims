@@ -57,4 +57,8 @@ public class Marks extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entered_by")
     private Teachers enteredBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private Teachers updatedBy;
 }

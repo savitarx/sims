@@ -46,6 +46,34 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
+    /**
+     * Uniqueness rules checked in the service layer, plus the legacy
+     * {@code IllegalArgumentException}s that older services still throw for the
+     * same reason.
+     */
+    @ExceptionHandler({DuplicateResourceException.class, IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponse> handleDuplicate(RuntimeException ex,
+                                                         HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    /**
+     * Operations rejected because the target entity is in an incompatible state,
+     * plus the legacy {@code IllegalStateException}s thrown for the same reason.
+     */
+    @ExceptionHandler({BusinessRuleViolationException.class, IllegalStateException.class})
+    public ResponseEntity<ErrorResponse> handleBusinessRule(RuntimeException ex,
+                                                            HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    /** Cross-field request problems that Bean Validation cannot express. */
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRequest(InvalidRequestException ex,
+                                                              HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex,
                                                             HttpServletRequest request) {

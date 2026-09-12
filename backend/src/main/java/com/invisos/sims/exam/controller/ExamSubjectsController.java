@@ -6,6 +6,9 @@ import com.invisos.sims.exam.mapper.ExamSubjectMapper;
 import com.invisos.sims.exam.model.ExamSubjects;
 import com.invisos.sims.exam.service.ExamSubjectsService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +35,11 @@ public class ExamSubjectsController {
 
 //    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<ExamSubjectResponseDto>> getAll() {
-        return ResponseEntity.ok(examSubjectMapper.toResponseList(examSubjectsService.findAll()));
+    public ResponseEntity<Page<ExamSubjectResponseDto>> getAll(
+            @PageableDefault(size = 20) Pageable pageable) {
+
+        return ResponseEntity.ok(
+                examSubjectsService.findAll(pageable).map(examSubjectMapper::toResponse));
     }
 
 //    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT

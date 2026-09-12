@@ -1,0 +1,2098 @@
+openapi: 3.0.3
+
+info:
+  title: SIMS API — Exam, Fee and Communication modules
+  description: |
+    School Information Management System — the exam, fee and communication modules
+    after the business-workflow redesign.
+
+    ## Conventions
+
+    **Nested business objects.** Responses embed the data a screen needs rather than
+    bare foreign keys: `subject`, `student`, `schoolClass`, `createdBy` and
+    `updatedBy` are objects carrying ids *and* names. The old flat `*Id` fields are
+    still returned but are deprecated and will be removed once the React app has
+    migrated off them.
+
+    **Pagination.** List endpoints return a Spring `Page`:
+    `?page=0&size=20&sort=createdAt,desc`.
+
+    **Actor fields.** Requests carry `actorId` (admin staff) or `enteredById` /
+    `updatedById` (teacher) because authentication is still being built by another
+    developer. These fields disappear once the JWT principal is available.
+
+    **Marks and fee "sheets".** Marks and fee statuses are worked on a section at a
+    time, so each has a `GET /sheet` that returns the whole roster pre-filled and a
+    `PUT /sheet` that saves it in one transaction.
+  version: 2.0.0
+  contact:
+    name: SIMS Team
+
+servers:
+  - url: http://localhost:8081
+    description: Local development
+  - url: https://api.example.com
+    description: Production
+
+tags:
+  - name: Exams
+    description: Exam lifecycle — creation, publishing, dashboard and readiness
+  - name: Exam Subjects
+    description: Subjects mapped into an exam, per class, with maximum marks
+  - name: Exam Timetable
+    description: Date and time slots for exam subjects
+  - name: Marks
+    description: Marks entry, corrections and results
+  - name: Fees
+    description: Fee definitions per class, academic year and term
+  - name: Student Fee Status
+    description: Per-student payment status, collection sheets and defaulters
+  - name: Announcements
+    description: School-wide announcements, published by ADMIN or PRINCIPAL
+  - name: Events
+    description: School calendar — school-wide and class-specific events
+
+security:
+  - BearerAuth: []
+
+paths:
+
+  # ==================================================================
+  # Exams
+  # ==================================================================
+  /api/v1/exams:
+    get:
+      tags: [Exams]
+      summary: List exams
+      description: Paginated, optionally filtered by academic year and/or status.
+      operationId: getAllExams
+      parameters:
+        - $ref: '#/components/parameters/AcademicYearIdFilter'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ExamStatus'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of exams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageExamResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Exams]
+      summary: Create an exam
+      description: Status defaults to `DRAFT`; publishing is done via the publish endpoint.
+      operationId: createExam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamRequest'
+      responses:
+        '200':
+          description: Exam created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: An exam with this name already exists for the academic year
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exams/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Exams]
+      summary: Get exam by id
+      operationId: getExamById
+      responses:
+        '200':
+          description: Exam
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Exams]
+      summary: Update an exam
+      description: |
+        Rejected once the exam is `PUBLISHED`. The status field is ignored here —
+        status only changes through the publish endpoint.
+      operationId: updateExam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExamRequest' }
+      responses:
+        '200':
+          description: Exam updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Exam is published, or the name duplicates another exam in the year
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Exams]
+      summary: Delete an exam
+      description: |
+        Rejected when the exam is published, when marks have been recorded against
+        it, or while subjects are still mapped to it.
+      operationId: deleteExam
+      responses:
+        '204': { description: Exam deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Published, has marks, or still has subjects mapped
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exams/{id}/publish:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    put:
+      tags: [Exams]
+      summary: Publish an exam
+      description: |
+        Rejected unless every precondition holds: at least one subject is mapped and
+        every mapped subject has a timetable slot. Call `publish-preview` first to
+        show the user what is missing.
+      operationId: publishExam
+      responses:
+        '200':
+          description: Exam published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Already published, or preconditions not met
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                timestamp: '2026-08-02T10:30:00Z'
+                status: 409
+                error: Conflict
+                message: 'Exam cannot be published: 2 subject(s) have not been scheduled in the timetable.'
+                path: /api/v1/exams/9f1c.../publish
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exams/{id}/overview:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Exams]
+      summary: Exam dashboard
+      description: |
+        Exam header plus every mapped subject with its schedule and marks-entry
+        progress — the whole dashboard in one call. Marks counts come from a single
+        grouped query, not one query per subject.
+      operationId: getExamOverview
+      responses:
+        '200':
+          description: Exam overview
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamOverviewResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exams/{id}/publish-preview:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Exams]
+      summary: Publish readiness checklist
+      description: |
+        Reports what blocks publishing without attempting it, so the UI can render a
+        checklist instead of guessing from an error message.
+      operationId: getExamPublishPreview
+      responses:
+        '200':
+          description: Readiness report
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublishPreviewResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Exam Subjects
+  # ==================================================================
+  /api/v1/exam-subjects:
+    get:
+      tags: [Exam Subjects]
+      summary: List exam subjects
+      operationId: getAllExamSubjects
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of exam subjects
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageExamSubjectResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Exam Subjects]
+      summary: Map a subject into an exam
+      operationId: createExamSubject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExamSubjectRequest' }
+      responses:
+        '200':
+          description: Exam subject created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamSubjectResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Already mapped for this class, or the exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exam-subjects/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Exam Subjects]
+      summary: Get exam subject by id
+      operationId: getExamSubjectById
+      responses:
+        '200':
+          description: Exam subject
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamSubjectResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Exam Subjects]
+      summary: Update an exam subject
+      description: |
+        Re-mapping is rejected once marks exist, and `maxMarks` cannot be lowered
+        below the highest mark already recorded.
+      operationId: updateExamSubject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExamSubjectRequest' }
+      responses:
+        '200':
+          description: Exam subject updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamSubjectResponse' }
+        '400':
+          description: Validation failure, or maxMarks below a recorded mark
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Exam published, marks already recorded, or duplicate mapping
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Exam Subjects]
+      summary: Delete an exam subject
+      description: Rejected when the exam is published or marks have been recorded.
+      operationId: deleteExamSubject
+      responses:
+        '204': { description: Exam subject deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Exam published, or marks already recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exam-subjects/exam/{examId}:
+    parameters:
+      - name: examId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Exam Subjects]
+      summary: Subjects mapped to an exam
+      description: Bounded by the exam, so returned unpaginated.
+      operationId: getExamSubjectsByExamId
+      responses:
+        '200':
+          description: Exam subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ExamSubjectResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Exam Timetable
+  # ==================================================================
+  /api/v1/exam-timetables:
+    get:
+      tags: [Exam Timetable]
+      summary: List timetable entries
+      operationId: getAllExamTimetables
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of timetable entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageExamTimetableResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Exam Timetable]
+      summary: Schedule an exam subject
+      description: |
+        One slot per exam subject (enforced by a unique index). The date must fall
+        inside the exam's academic year, and the exam must not be published.
+      operationId: createExamTimetable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExamTimetableRequest' }
+      responses:
+        '200':
+          description: Timetable entry created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamTimetableResponse' }
+        '400':
+          description: Validation failure, or date outside the academic year
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Subject already scheduled, or the exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exam-timetables/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Exam Timetable]
+      summary: Get timetable entry by id
+      operationId: getExamTimetableById
+      responses:
+        '200':
+          description: Timetable entry
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamTimetableResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Exam Timetable]
+      summary: Reschedule an exam subject
+      operationId: updateExamTimetable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExamTimetableRequest' }
+      responses:
+        '200':
+          description: Timetable entry updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExamTimetableResponse' }
+        '400':
+          description: Validation failure, or date outside the academic year
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Subject already scheduled, or the exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Exam Timetable]
+      summary: Delete a timetable entry
+      operationId: deleteExamTimetable
+      responses:
+        '204': { description: Timetable entry deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/exam-timetables/exam/{examId}:
+    parameters:
+      - name: examId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Exam Timetable]
+      summary: Full schedule of an exam
+      description: Ordered by date then time.
+      operationId: getExamTimetablesByExamId
+      responses:
+        '200':
+          description: Timetable entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ExamTimetableResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Marks — workflow
+  # ==================================================================
+  /api/v1/marks/sheet:
+    get:
+      tags: [Marks]
+      summary: Marks-entry sheet
+      description: |
+        The whole marks-entry screen in one call: exam, subject, section and the full
+        student roster (ordered by roll number) with any existing marks pre-filled.
+        `marksObtained` is `null` for students not yet marked.
+
+        Replaces roughly eight lookups the UI previously had to make.
+      operationId: getMarksSheet
+      parameters:
+        - name: examSubjectId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: sectionId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Marks sheet
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MarksSheetResponse' }
+        '400':
+          description: The section does not belong to the exam subject's class
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Marks]
+      summary: Save a marks sheet
+      description: |
+        Transactional bulk upsert. The entire payload is validated before anything is
+        written, so one bad row cannot leave the sheet half-saved. A `null`
+        `marksObtained` clears a previously recorded mark.
+
+        Rejected when the exam is published.
+      operationId: saveMarksSheet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarksSheetSaveRequest' }
+      responses:
+        '200':
+          description: Sheet saved; the refreshed sheet is returned
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MarksSheetResponse' }
+        '400':
+          description: |
+            Validation failure, a mark above `maxMarks`, a duplicate enrollment in the
+            payload, or an enrollment outside the section.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The exam is published, so marks are frozen
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/marks/results/student:
+    get:
+      tags: [Marks]
+      summary: One student's result
+      description: |
+        Every subject of the exam for the student's class, with marks, per-subject
+        percentage, totals and overall percentage. Unmarked subjects appear with a
+        `null` mark so the report card shows the gap.
+      operationId: getStudentResult
+      parameters:
+        - name: examId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: enrollmentId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Student result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentResultResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/marks/results/section:
+    get:
+      tags: [Marks]
+      summary: Result summary for a section
+      description: One result block per student in the section, bounded by roster size.
+      operationId: getSectionResults
+      parameters:
+        - name: examId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: sectionId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Section results
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/StudentResultResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Marks — CRUD
+  # ==================================================================
+  /api/v1/marks:
+    get:
+      tags: [Marks]
+      summary: List marks
+      operationId: getAllMarks
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of marks
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageMarkResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Marks]
+      summary: Record a single mark
+      description: |
+        Single-record entry, kept for corrections. Bulk entry should use
+        `PUT /api/v1/marks/sheet`.
+      operationId: createMark
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarkRequest' }
+      responses:
+        '200':
+          description: Mark recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MarkResponse' }
+        '400':
+          description: |
+            Validation failure, a mark above `maxMarks`, or a student not enrolled in
+            the exam subject's class.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Mark already recorded for this pair, or the exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/marks/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Marks]
+      summary: Get mark by id
+      operationId: getMarkById
+      responses:
+        '200':
+          description: Mark
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MarkResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Marks]
+      summary: Correct a mark
+      operationId: updateMark
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarkRequest' }
+      responses:
+        '200':
+          description: Mark updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MarkResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Duplicate pair, or the exam is published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Marks]
+      summary: Delete a mark
+      operationId: deleteMark
+      responses:
+        '204': { description: Mark deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The exam is published, so marks are frozen
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/marks/exam-subject/{examSubjectId}:
+    parameters:
+      - name: examSubjectId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Marks]
+      summary: Marks for an exam subject
+      description: Prefer `GET /api/v1/marks/sheet` for the entry screen.
+      operationId: getMarksByExamSubject
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Page of marks
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageMarkResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/marks/enrollment/{enrollmentId}:
+    parameters:
+      - name: enrollmentId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Marks]
+      summary: Marks for a student enrollment
+      description: Bounded by the student's subject count, so returned unpaginated.
+      operationId: getMarksByEnrollment
+      responses:
+        '200':
+          description: Marks
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MarkResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Fees
+  # ==================================================================
+  /api/v1/fees:
+    get:
+      tags: [Fees]
+      summary: List fees
+      operationId: getAllFees
+      parameters:
+        - $ref: '#/components/parameters/ClassIdFilter'
+        - $ref: '#/components/parameters/AcademicYearIdFilter'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of fees
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageFeeResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Fees]
+      summary: Define a fee
+      description: Unique per (class, academic year, term).
+      operationId: createFee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FeeRequest' }
+      responses:
+        '200':
+          description: Fee created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: A fee already exists for this class, year and term
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/fees/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Fees]
+      summary: Get fee by id
+      operationId: getFeeById
+      responses:
+        '200':
+          description: Fee
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Fees]
+      summary: Update a fee
+      description: |
+        Changing the class or academic year is rejected once student statuses exist,
+        since it would move those students' records onto a different class or year.
+      operationId: updateFee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FeeRequest' }
+      responses:
+        '200':
+          description: Fee updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Duplicate definition, or statuses already recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Fees]
+      summary: Delete a fee
+      description: Rejected while any student fee status references it.
+      operationId: deleteFee
+      responses:
+        '204': { description: Fee deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Student fee statuses are recorded against this fee
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Student Fee Status
+  # ==================================================================
+  /api/v1/student-fee-status/sheet:
+    get:
+      tags: [Student Fee Status]
+      summary: Fee collection sheet
+      description: |
+        One fee, one section, every student's payment status plus counts by status.
+        `status` is `null` for students with no record yet.
+      operationId: getFeeStatusSheet
+      parameters:
+        - name: feeId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: sectionId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Fee status sheet
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeStatusSheetResponse' }
+        '400':
+          description: The section does not belong to the fee's class
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Student Fee Status]
+      summary: Save a fee collection sheet
+      description: |
+        Transactional bulk upsert, validated in full before anything is written.
+        Exactly one of `updatedById` (teacher) or `updatedByAdminId` must be given.
+      operationId: saveFeeStatusSheet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FeeStatusSheetSaveRequest' }
+      responses:
+        '200':
+          description: Sheet saved; the refreshed sheet is returned
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeeStatusSheetResponse' }
+        '400':
+          description: |
+            Validation failure, both or neither actor supplied, a duplicate enrollment
+            in the payload, or an enrollment outside the section.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/student-fee-status/defaulters:
+    get:
+      tags: [Student Fee Status]
+      summary: Students who have not fully paid
+      description: Statuses of `NOT_PAID` or `PARTIAL`, optionally narrowed by class and year.
+      operationId: getFeeDefaulters
+      parameters:
+        - $ref: '#/components/parameters/ClassIdFilter'
+        - $ref: '#/components/parameters/AcademicYearIdFilter'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of outstanding statuses
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageStudentFeeStatusResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/student-fee-status:
+    get:
+      tags: [Student Fee Status]
+      summary: List student fee statuses
+      operationId: getAllStudentFeeStatuses
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of statuses
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageStudentFeeStatusResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Student Fee Status]
+      summary: Record a student's fee status
+      description: |
+        One record per (enrollment, fee). The student must be enrolled in the class
+        the fee belongs to.
+      operationId: createStudentFeeStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StudentFeeStatusRequest' }
+      responses:
+        '200':
+          description: Status recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentFeeStatusResponse' }
+        '400':
+          description: |
+            Validation failure, both or neither actor supplied, or the student is not
+            in the fee's class.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: A status already exists for this student and fee
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/student-fee-status/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Student Fee Status]
+      summary: Get status by id
+      operationId: getStudentFeeStatusById
+      responses:
+        '200':
+          description: Status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentFeeStatusResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Student Fee Status]
+      summary: Change a student's fee status
+      operationId: updateStudentFeeStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StudentFeeStatusRequest' }
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentFeeStatusResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: A status already exists for the target student and fee
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Student Fee Status]
+      summary: Delete a status record
+      operationId: deleteStudentFeeStatus
+      responses:
+        '204': { description: Status deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/student-fee-status/enrollment/{enrollmentId}:
+    parameters:
+      - name: enrollmentId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Student Fee Status]
+      summary: All fee statuses for a student
+      description: Bounded by the number of terms, so returned unpaginated.
+      operationId: getStudentFeeStatusesByEnrollment
+      responses:
+        '200':
+          description: Statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/StudentFeeStatusResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Announcements
+  # ==================================================================
+  /api/v1/announcements:
+    get:
+      tags: [Announcements]
+      summary: Announcement feed
+      description: |
+        The announcements tab — visible to every user, newest first, optionally
+        filtered by priority.
+      operationId: getAnnouncementFeed
+      parameters:
+        - name: priority
+          in: query
+          required: false
+          schema: { $ref: '#/components/schemas/AnnouncementPriority' }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of announcements
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageAnnouncementResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Announcements]
+      summary: Publish an announcement
+      description: |
+        Only an **active** ADMIN or PRINCIPAL may publish. Priority defaults to
+        `NOTICE`.
+      operationId: createAnnouncement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnnouncementRequest' }
+      responses:
+        '200':
+          description: Announcement published
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnnouncementResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The actor is inactive, or is not an ADMIN/PRINCIPAL
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/announcements/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Announcements]
+      summary: Get announcement by id
+      operationId: getAnnouncementById
+      responses:
+        '200':
+          description: Announcement
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnnouncementResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Announcements]
+      summary: Update an announcement
+      operationId: updateAnnouncement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnnouncementRequest' }
+      responses:
+        '200':
+          description: Announcement updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnnouncementResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The actor is inactive, or is not an ADMIN/PRINCIPAL
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Announcements]
+      summary: Delete an announcement
+      operationId: deleteAnnouncement
+      responses:
+        '204': { description: Announcement deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/announcements/priority/{priority}:
+    parameters:
+      - name: priority
+        in: path
+        required: true
+        schema: { $ref: '#/components/schemas/AnnouncementPriority' }
+    get:
+      tags: [Announcements]
+      summary: Announcements by priority
+      deprecated: true
+      description: Use `GET /api/v1/announcements?priority=` instead.
+      operationId: getAnnouncementsByPriority
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Page of announcements
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageAnnouncementResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  # ==================================================================
+  # Events
+  # ==================================================================
+  /api/v1/events/calendar:
+    get:
+      tags: [Events]
+      summary: School calendar
+      description: |
+        Events overlapping the given date range. Passing `classId` returns that
+        class's events **together with** school-wide ones, which is what a calendar
+        screen needs — unlike `/events/class/{classId}`, which returns class events
+        only. Range is capped at 400 days.
+      operationId: getEventCalendar
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+          example: '2026-09-01'
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+          example: '2026-09-30'
+        - name: classId
+          in: query
+          required: false
+          description: Omit for school-wide events only.
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Events in range, earliest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/EventResponse' }
+        '400':
+          description: '`from` after `to`, or the range exceeds 400 days'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/events/upcoming:
+    get:
+      tags: [Events]
+      summary: Upcoming events
+      description: Events still running or yet to start, soonest first. Dashboard widget.
+      operationId: getUpcomingEvents
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Page of events
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageEventResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/events:
+    get:
+      tags: [Events]
+      summary: List events
+      operationId: getAllEvents
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Page of events
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageEventResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    post:
+      tags: [Events]
+      summary: Create an event
+      description: |
+        Omit `classId` for a school-wide event. `endDate` must not precede
+        `startDate`. Only an active ADMIN or PRINCIPAL may create events.
+      operationId: createEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventRequest' }
+      responses:
+        '200':
+          description: Event created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventResponse' }
+        '400':
+          description: Validation failure, or end date before start date
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The actor is inactive, or is not an ADMIN/PRINCIPAL
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/events/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PathId'
+    get:
+      tags: [Events]
+      summary: Get event by id
+      operationId: getEventById
+      responses:
+        '200':
+          description: Event
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    put:
+      tags: [Events]
+      summary: Update an event
+      operationId: updateEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventRequest' }
+      responses:
+        '200':
+          description: Event updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventResponse' }
+        '400':
+          description: Validation failure, or end date before start date
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: The actor is inactive, or is not an ADMIN/PRINCIPAL
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+    delete:
+      tags: [Events]
+      summary: Delete an event
+      operationId: deleteEvent
+      responses:
+        '204': { description: Event deleted }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+  /api/v1/events/class/{classId}:
+    parameters:
+      - name: classId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Events]
+      summary: Class-specific events
+      description: |
+        Class events only — school-wide events are **excluded**. For the combined
+        view a calendar screen needs, use `/api/v1/events/calendar?classId=`.
+      operationId: getEventsByClass
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Page of events
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageEventResponse' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+
+components:
+
+  parameters:
+    PathId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Page:
+      name: page
+      in: query
+      required: false
+      schema: { type: integer, minimum: 0, default: 0 }
+    Size:
+      name: size
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, default: 20 }
+    Sort:
+      name: sort
+      in: query
+      required: false
+      description: '`property,(asc|desc)`; repeatable.'
+      schema:
+        type: array
+        items: { type: string }
+      example: ['createdAt,desc']
+    ClassIdFilter:
+      name: classId
+      in: query
+      required: false
+      schema: { type: string, format: uuid }
+    AcademicYearIdFilter:
+      name: academicYearId
+      in: query
+      required: false
+      schema: { type: string, format: uuid }
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT issued by the login endpoint. Authentication is still being built, so
+        endpoints are currently open and role rules are recorded as TODOs beside each
+        controller method.
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: A referenced record does not exist
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            timestamp: '2026-08-02T10:30:00Z'
+            status: 404
+            error: Not Found
+            message: 'Exam not found with id: 9f1c8b2e-...'
+            path: /api/v1/exams/9f1c8b2e-...
+    ValidationError:
+      description: Bean validation failure; offending fields are listed in `fieldErrors`
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            timestamp: '2026-08-02T10:30:00Z'
+            status: 400
+            error: Bad Request
+            message: Validation failed
+            path: /api/v1/exams
+            fieldErrors:
+              examName: Exam name is required
+              actorId: Acting admin id is required
+    InternalServerError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  schemas:
+
+    # ---------------- enums ----------------
+    ExamStatus:
+      type: string
+      enum: [DRAFT, PUBLISHED]
+    FeeStatus:
+      type: string
+      enum: [PAID, PARTIAL, NOT_PAID]
+    AnnouncementPriority:
+      type: string
+      enum: [URGENT, IMPORTANT, NOTICE]
+    SubjectType:
+      type: string
+      enum: [COMPULSORY, ELECTIVE]
+
+    # ---------------- shared summaries ----------------
+    ActorSummary:
+      type: object
+      description: A person who created or last changed a record.
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: R. Iyer }
+        role:
+          type: string
+          description: Designation, e.g. PRINCIPAL or SENIOR_TEACHER.
+          example: SENIOR_TEACHER
+    ClassSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: Grade 10 }
+    SubjectSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: Mathematics }
+        code: { type: string, example: MATH001 }
+        type: { $ref: '#/components/schemas/SubjectType' }
+    AcademicYearSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        label: { type: string, example: 2025-2026 }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+    SectionSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: A }
+        classId: { type: string, format: uuid }
+        className: { type: string, example: Grade 10 }
+        displayName:
+          type: string
+          description: Ready-made heading label.
+          example: Grade 10 - A
+    StudentSummary:
+      type: object
+      description: A student seen through their enrollment.
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        studentId: { type: string, format: uuid }
+        name: { type: string, example: Aarav Sharma }
+        rollNumber: { type: string, example: '04' }
+        admissionNumber: { type: string, example: ADM-2025-0142 }
+
+    # ---------------- errors & paging ----------------
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp: { type: string, format: date-time }
+        status: { type: integer, example: 409 }
+        error: { type: string, example: Conflict }
+        message: { type: string }
+        path: { type: string }
+        fieldErrors:
+          type: object
+          nullable: true
+          additionalProperties: { type: string }
+          description: Present only for bean validation failures.
+      required: [timestamp, status, error, message, path]
+
+    PageMetadata:
+      type: object
+      properties:
+        totalElements: { type: integer, format: int64, example: 137 }
+        totalPages: { type: integer, example: 7 }
+        number: { type: integer, description: Zero-based page index, example: 0 }
+        size: { type: integer, example: 20 }
+        numberOfElements: { type: integer, example: 20 }
+        first: { type: boolean }
+        last: { type: boolean }
+        empty: { type: boolean }
+
+    # ---------------- exam ----------------
+    ExamSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: Term 1 Examination }
+        status: { $ref: '#/components/schemas/ExamStatus' }
+
+    ExamRequest:
+      type: object
+      required: [academicYearId, examName, actorId]
+      properties:
+        academicYearId: { type: string, format: uuid }
+        examName: { type: string, maxLength: 255, example: Term 1 Examination }
+        status:
+          allOf: [{ $ref: '#/components/schemas/ExamStatus' }]
+          description: Optional; defaults to DRAFT. Ignored on update.
+        actorId:
+          type: string
+          format: uuid
+          description: |
+            Admin staff performing the action — becomes `createdBy` on create and
+            `updatedBy` on update. Removed once authentication lands.
+
+    ExamResponse:
+      type: object
+      properties:
+        examId: { type: string, format: uuid }
+        examName: { type: string }
+        status: { $ref: '#/components/schemas/ExamStatus' }
+        academicYear: { $ref: '#/components/schemas/AcademicYearSummary' }
+        createdBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        academicYearId:
+          type: string
+          format: uuid
+          deprecated: true
+          description: Use `academicYear`.
+        createdById:
+          type: string
+          format: uuid
+          deprecated: true
+          description: Use `createdBy`.
+
+    ExamSubjectRequest:
+      type: object
+      required: [examId, subjectId, classId, maxMarks, actorId]
+      properties:
+        examId: { type: string, format: uuid }
+        subjectId: { type: string, format: uuid }
+        classId: { type: string, format: uuid }
+        maxMarks: { type: integer, minimum: 1, maximum: 1000, example: 100 }
+        actorId: { type: string, format: uuid }
+
+    ExamSubjectResponse:
+      type: object
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        maxMarks: { type: integer, example: 100 }
+        exam: { $ref: '#/components/schemas/ExamSummary' }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        schoolClass: { $ref: '#/components/schemas/ClassSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        examId: { type: string, format: uuid, deprecated: true }
+        subjectId: { type: string, format: uuid, deprecated: true }
+        classId: { type: string, format: uuid, deprecated: true }
+
+    ExamTimetableRequest:
+      type: object
+      required: [examSubjectId, examDate, examTime, actorId]
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        examDate: { type: string, format: date, example: '2026-09-15' }
+        examTime: { type: string, example: '09:30:00' }
+        actorId: { type: string, format: uuid }
+
+    ExamTimetableResponse:
+      type: object
+      properties:
+        examTimetableId: { type: string, format: uuid }
+        examDate: { type: string, format: date }
+        examTime: { type: string, example: '09:30:00' }
+        maxMarks: { type: integer }
+        exam: { $ref: '#/components/schemas/ExamSummary' }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        schoolClass: { $ref: '#/components/schemas/ClassSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        examSubjectId: { type: string, format: uuid, deprecated: true }
+
+    MarkRequest:
+      type: object
+      required: [enrollmentId, examSubjectId, marksObtained, enteredById]
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        examSubjectId: { type: string, format: uuid }
+        marksObtained: { type: number, format: double, minimum: 0, example: 85.5 }
+        enteredById:
+          type: string
+          format: uuid
+          description: |
+            Teacher performing the action — becomes `enteredBy` on create and
+            `updatedBy` on update. Removed once authentication lands.
+
+    MarkResponse:
+      type: object
+      properties:
+        markId: { type: string, format: uuid }
+        marksObtained: { type: number, format: double, example: 85.5 }
+        maxMarks: { type: integer, example: 100 }
+        student: { $ref: '#/components/schemas/StudentSummary' }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        exam: { $ref: '#/components/schemas/ExamSummary' }
+        enteredBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        enrollmentId: { type: string, format: uuid, deprecated: true }
+        examSubjectId: { type: string, format: uuid, deprecated: true }
+        enteredById: { type: string, format: uuid, deprecated: true }
+
+    MarksSheetEntry:
+      type: object
+      properties:
+        student: { $ref: '#/components/schemas/StudentSummary' }
+        markId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Null until a mark has been saved.
+        marksObtained:
+          type: number
+          format: double
+          nullable: true
+          description: Null when not yet entered.
+        enteredBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedAt: { type: string, format: date-time, nullable: true }
+
+    MarksSheetResponse:
+      type: object
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        exam: { $ref: '#/components/schemas/ExamSummary' }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        section: { $ref: '#/components/schemas/SectionSummary' }
+        maxMarks: { type: integer, example: 100 }
+        complete:
+          type: boolean
+          description: True once every student in the roster has a mark.
+        totalStudents: { type: integer, example: 40 }
+        marksEntered: { type: integer, example: 37 }
+        editable:
+          type: boolean
+          description: False when the exam is published; render the grid read-only.
+        entries:
+          type: array
+          items: { $ref: '#/components/schemas/MarksSheetEntry' }
+
+    MarksSheetEntryRequest:
+      type: object
+      required: [enrollmentId]
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        marksObtained:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+          description: Null clears a previously entered mark.
+
+    MarksSheetSaveRequest:
+      type: object
+      required: [examSubjectId, sectionId, enteredById, entries]
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        sectionId: { type: string, format: uuid }
+        enteredById: { type: string, format: uuid }
+        entries:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/MarksSheetEntryRequest' }
+
+    ExamSubjectProgress:
+      type: object
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        schoolClass: { $ref: '#/components/schemas/ClassSummary' }
+        maxMarks: { type: integer }
+        scheduled: { type: boolean }
+        examDate: { type: string, format: date, nullable: true }
+        examTime: { type: string, nullable: true, example: '09:30:00' }
+        marksEntered: { type: integer, format: int64, example: 37 }
+
+    ExamOverviewResponse:
+      type: object
+      properties:
+        examId: { type: string, format: uuid }
+        examName: { type: string }
+        status: { $ref: '#/components/schemas/ExamStatus' }
+        academicYear: { $ref: '#/components/schemas/AcademicYearSummary' }
+        createdBy: { $ref: '#/components/schemas/ActorSummary' }
+        totalSubjects: { type: integer, example: 6 }
+        scheduledSubjects: { type: integer, example: 4 }
+        readyToPublish: { type: boolean }
+        subjects:
+          type: array
+          items: { $ref: '#/components/schemas/ExamSubjectProgress' }
+
+    PublishPreviewResponse:
+      type: object
+      properties:
+        examId: { type: string, format: uuid }
+        examName: { type: string }
+        readyToPublish: { type: boolean }
+        totalSubjects: { type: integer }
+        scheduledSubjects: { type: integer }
+        blockers:
+          type: array
+          description: Conditions that will cause publish to be rejected.
+          items: { type: string }
+          example: ['2 subject(s) have not been scheduled in the timetable.']
+        warnings:
+          type: array
+          description: Worth surfacing, but not blocking.
+          items: { type: string }
+          example: ['3 subject(s) have no marks entered yet.']
+
+    StudentResultSubject:
+      type: object
+      properties:
+        examSubjectId: { type: string, format: uuid }
+        subject: { $ref: '#/components/schemas/SubjectSummary' }
+        maxMarks: { type: integer }
+        marksObtained:
+          type: number
+          format: double
+          nullable: true
+          description: Null when the subject has not been marked for this student.
+        percentage: { type: number, format: double, nullable: true, example: 85.50 }
+
+    StudentResultResponse:
+      type: object
+      properties:
+        exam: { $ref: '#/components/schemas/ExamSummary' }
+        student: { $ref: '#/components/schemas/StudentSummary' }
+        section: { $ref: '#/components/schemas/SectionSummary' }
+        subjects:
+          type: array
+          items: { $ref: '#/components/schemas/StudentResultSubject' }
+        totalMarksObtained: { type: number, format: double, example: 462.5 }
+        totalMaxMarks: { type: integer, example: 500 }
+        percentage:
+          type: number
+          format: double
+          nullable: true
+          description: Across marked subjects only, 2 dp. Null when nothing is marked.
+          example: 92.50
+        subjectsMarked: { type: integer, example: 5 }
+        subjectsTotal: { type: integer, example: 6 }
+
+    # ---------------- fee ----------------
+    FeeSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        termName: { type: string, example: Term 1 }
+        schoolClass: { $ref: '#/components/schemas/ClassSummary' }
+        academicYearLabel: { type: string, example: 2025-2026 }
+
+    FeeRequest:
+      type: object
+      required: [classId, academicYearId, termName, actorId]
+      properties:
+        classId: { type: string, format: uuid }
+        academicYearId: { type: string, format: uuid }
+        termName: { type: string, maxLength: 255, example: Term 1 }
+        actorId: { type: string, format: uuid }
+
+    FeeResponse:
+      type: object
+      properties:
+        feeId: { type: string, format: uuid }
+        termName: { type: string }
+        schoolClass: { $ref: '#/components/schemas/ClassSummary' }
+        academicYear: { $ref: '#/components/schemas/AcademicYearSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        classId: { type: string, format: uuid, deprecated: true }
+        academicYearId: { type: string, format: uuid, deprecated: true }
+
+    StudentFeeStatusRequest:
+      type: object
+      required: [enrollmentId, feeId, status]
+      description: Exactly one of `updatedById` or `updatedByAdminId` must be supplied.
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        feeId: { type: string, format: uuid }
+        status: { $ref: '#/components/schemas/FeeStatus' }
+        updatedById:
+          type: string
+          format: uuid
+          nullable: true
+          description: Teacher changing the status.
+        updatedByAdminId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Admin staff changing the status.
+
+    StudentFeeStatusResponse:
+      type: object
+      properties:
+        studentFeeStatusId: { type: string, format: uuid }
+        status: { $ref: '#/components/schemas/FeeStatus' }
+        student: { $ref: '#/components/schemas/StudentSummary' }
+        section: { $ref: '#/components/schemas/SectionSummary' }
+        fee: { $ref: '#/components/schemas/FeeSummary' }
+        updatedBy:
+          allOf: [{ $ref: '#/components/schemas/ActorSummary' }]
+          description: Whoever last changed the status — teacher or admin, collapsed into one field.
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        enrollmentId: { type: string, format: uuid, deprecated: true }
+        feeId: { type: string, format: uuid, deprecated: true }
+        updatedById: { type: string, format: uuid, deprecated: true }
+
+    FeeStatusSheetEntry:
+      type: object
+      properties:
+        student: { $ref: '#/components/schemas/StudentSummary' }
+        studentFeeStatusId: { type: string, format: uuid, nullable: true }
+        status:
+          allOf: [{ $ref: '#/components/schemas/FeeStatus' }]
+          nullable: true
+          description: Null when no status has been recorded yet.
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedAt: { type: string, format: date-time, nullable: true }
+
+    FeeStatusSheetResponse:
+      type: object
+      properties:
+        fee: { $ref: '#/components/schemas/FeeSummary' }
+        section: { $ref: '#/components/schemas/SectionSummary' }
+        totalStudents: { type: integer, example: 40 }
+        paidCount: { type: integer, format: int64, example: 31 }
+        partialCount: { type: integer, format: int64, example: 4 }
+        notPaidCount: { type: integer, format: int64, example: 3 }
+        unrecordedCount:
+          type: integer
+          format: int64
+          description: Students with no status record yet.
+          example: 2
+        entries:
+          type: array
+          items: { $ref: '#/components/schemas/FeeStatusSheetEntry' }
+
+    FeeStatusSheetEntryRequest:
+      type: object
+      required: [enrollmentId, status]
+      properties:
+        enrollmentId: { type: string, format: uuid }
+        status: { $ref: '#/components/schemas/FeeStatus' }
+
+    FeeStatusSheetSaveRequest:
+      type: object
+      required: [feeId, sectionId, entries]
+      description: Exactly one of `updatedById` or `updatedByAdminId` must be supplied.
+      properties:
+        feeId: { type: string, format: uuid }
+        sectionId: { type: string, format: uuid }
+        updatedById: { type: string, format: uuid, nullable: true }
+        updatedByAdminId: { type: string, format: uuid, nullable: true }
+        entries:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/FeeStatusSheetEntryRequest' }
+
+    # ---------------- communication ----------------
+    AnnouncementRequest:
+      type: object
+      required: [title, message, actorId]
+      properties:
+        title: { type: string, maxLength: 255, example: Annual Day Rehearsal }
+        message:
+          type: string
+          maxLength: 255
+          example: Rehearsals begin Monday at 2 PM in the main hall.
+        priority:
+          allOf: [{ $ref: '#/components/schemas/AnnouncementPriority' }]
+          description: Optional; defaults to NOTICE.
+        actorId:
+          type: string
+          format: uuid
+          description: Must be an active ADMIN or PRINCIPAL.
+
+    AnnouncementResponse:
+      type: object
+      properties:
+        announcementId: { type: string, format: uuid }
+        title: { type: string }
+        message: { type: string }
+        priority: { $ref: '#/components/schemas/AnnouncementPriority' }
+        createdBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        createdById: { type: string, format: uuid, deprecated: true }
+
+    EventRequest:
+      type: object
+      required: [title, startDate, endDate, actorId]
+      properties:
+        title: { type: string, maxLength: 255, example: Annual Sports Day }
+        description: { type: string, maxLength: 255, nullable: true }
+        startDate: { type: string, format: date, example: '2026-09-20' }
+        endDate:
+          type: string
+          format: date
+          description: Must not precede `startDate`.
+          example: '2026-09-21'
+        classId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Omit for a school-wide event.
+        actorId:
+          type: string
+          format: uuid
+          description: Must be an active ADMIN or PRINCIPAL.
+
+    EventResponse:
+      type: object
+      properties:
+        eventId: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        schoolClass:
+          allOf: [{ $ref: '#/components/schemas/ClassSummary' }]
+          nullable: true
+          description: Null for a school-wide event.
+        schoolWide: { type: boolean }
+        createdBy: { $ref: '#/components/schemas/ActorSummary' }
+        updatedBy: { $ref: '#/components/schemas/ActorSummary' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        classId: { type: string, format: uuid, deprecated: true, nullable: true }
+        createdById: { type: string, format: uuid, deprecated: true }
+
+    # ---------------- page envelopes ----------------
+    PageExamResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/ExamResponse' }
+    PageExamSubjectResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/ExamSubjectResponse' }
+    PageExamTimetableResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/ExamTimetableResponse' }
+    PageMarkResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/MarkResponse' }
+    PageFeeResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/FeeResponse' }
+    PageStudentFeeStatusResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/StudentFeeStatusResponse' }
+    PageAnnouncementResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/AnnouncementResponse' }
+    PageEventResponse:
+      allOf:
+        - $ref: '#/components/schemas/PageMetadata'
+        - type: object
+          properties:
+            content:
+              type: array
+              items: { $ref: '#/components/schemas/EventResponse' }

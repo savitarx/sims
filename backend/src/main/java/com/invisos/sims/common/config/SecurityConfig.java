@@ -37,6 +37,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/teachers/**").permitAll()
                         .requestMatchers("/api/v1/**").permitAll()
+                        // API docs stay open so the generated spec is reachable
+                        // while authentication is still being built.
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

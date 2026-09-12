@@ -1,7 +1,9 @@
 package com.invisos.sims.fee.mapper;
 
+import com.invisos.sims.common.mapper.SummaryMapper;
 import com.invisos.sims.fee.dto.request.FeeRequestDto;
 import com.invisos.sims.fee.dto.response.FeeResponseDto;
+import com.invisos.sims.fee.dto.response.FeeSummaryDto;
 import com.invisos.sims.fee.model.Fees;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,16 +11,18 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = SummaryMapper.class)
 public interface FeeMapper {
 
     @Mapping(target = "feeId", ignore = true)
     @Mapping(target = "schoolClass", ignore = true)
     @Mapping(target = "academicYear", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     Fees toEntity(FeeRequestDto dto);
 
     @Mapping(target = "schoolClass", ignore = true)
     @Mapping(target = "academicYear", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(FeeRequestDto dto, @MappingTarget Fees entity);
@@ -28,4 +32,8 @@ public interface FeeMapper {
     FeeResponseDto toResponse(Fees entity);
 
     List<FeeResponseDto> toResponseList(List<Fees> entities);
+
+    @Mapping(source = "feeId", target = "id")
+    @Mapping(source = "academicYear.yearLabel", target = "academicYearLabel")
+    FeeSummaryDto toSummary(Fees entity);
 }

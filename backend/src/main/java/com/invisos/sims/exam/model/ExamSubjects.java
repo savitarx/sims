@@ -4,6 +4,7 @@ import com.invisos.sims.common.entity.BaseEntity;
 
 import com.invisos.sims.academic.model.Classes;
 import com.invisos.sims.academic.model.Subjects;
+import com.invisos.sims.admin.model.AdminStaff;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,4 +50,8 @@ public class ExamSubjects extends BaseEntity {
 
     @Column(name = "max_marks")
     private Integer maxMarks;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private AdminStaff updatedBy;
 }

@@ -2,6 +2,7 @@ package com.invisos.sims.fee.model;
 
 import com.invisos.sims.common.entity.BaseEntity;
 
+import com.invisos.sims.admin.model.AdminStaff;
 import com.invisos.sims.common.enums.FeeStatus;
 import com.invisos.sims.student.model.StudentEnrollment;
 import com.invisos.sims.teacher.model.Teachers;
@@ -60,4 +61,10 @@ public class StudentFeeStatus extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
     private Teachers updatedBy;
+
+    // A fee status may be changed by admin staff instead of a teacher; exactly
+    // one of updatedBy / updatedByAdmin is set (enforced in the service).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by_admin")
+    private AdminStaff updatedByAdmin;
 }

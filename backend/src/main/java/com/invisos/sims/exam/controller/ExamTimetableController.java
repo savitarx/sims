@@ -6,6 +6,9 @@ import com.invisos.sims.exam.mapper.ExamTimetableMapper;
 import com.invisos.sims.exam.model.ExamTimetable;
 import com.invisos.sims.exam.service.ExamTimetableService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +35,11 @@ public class ExamTimetableController {
 
 //    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
     @GetMapping
-    public ResponseEntity<List<ExamTimetableResponseDto>> getAll() {
-        return ResponseEntity.ok(examTimetableMapper.toResponseList(examTimetableService.findAll()));
+    public ResponseEntity<Page<ExamTimetableResponseDto>> getAll(
+            @PageableDefault(size = 20, sort = "examDate") Pageable pageable) {
+
+        return ResponseEntity.ok(
+                examTimetableService.findAll(pageable).map(examTimetableMapper::toResponse));
     }
 
 //    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT

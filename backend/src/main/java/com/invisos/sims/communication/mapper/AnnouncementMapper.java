@@ -1,5 +1,6 @@
 package com.invisos.sims.communication.mapper;
 
+import com.invisos.sims.common.mapper.SummaryMapper;
 import com.invisos.sims.communication.dto.request.AnnouncementRequestDto;
 import com.invisos.sims.communication.dto.response.AnnouncementResponseDto;
 import com.invisos.sims.communication.model.Announcements;
@@ -9,14 +10,16 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = SummaryMapper.class)
 public interface AnnouncementMapper {
 
     @Mapping(target = "announcementId", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     Announcements toEntity(AnnouncementRequestDto dto);
 
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(AnnouncementRequestDto dto, @MappingTarget Announcements entity);

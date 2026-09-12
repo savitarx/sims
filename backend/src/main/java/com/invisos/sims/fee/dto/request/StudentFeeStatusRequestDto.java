@@ -26,6 +26,13 @@ public class StudentFeeStatusRequestDto {
     @NotNull(message = "Status is required")
     private FeeStatus status;
 
-    @NotNull(message = "Updated by (teacher id) is required")
+    /**
+     * Teacher changing the status. Exactly one of {@code updatedById} or
+     * {@code updatedByAdminId} must be supplied.
+     * TODO: drop once authentication lands and derive from the JWT principal.
+     */
     private UUID updatedById;
+
+    /** Admin staff changing the status; the admin-side counterpart of updatedById. */
+    private UUID updatedByAdminId;
 }

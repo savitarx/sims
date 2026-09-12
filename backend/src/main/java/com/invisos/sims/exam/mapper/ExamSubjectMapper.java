@@ -1,5 +1,6 @@
 package com.invisos.sims.exam.mapper;
 
+import com.invisos.sims.common.mapper.SummaryMapper;
 import com.invisos.sims.exam.dto.request.ExamSubjectRequestDto;
 import com.invisos.sims.exam.dto.response.ExamSubjectResponseDto;
 import com.invisos.sims.exam.model.ExamSubjects;
@@ -9,18 +10,20 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SummaryMapper.class, ExamMapper.class})
 public interface ExamSubjectMapper {
 
     @Mapping(target = "examSubjectId", ignore = true)
     @Mapping(target = "exam", ignore = true)
     @Mapping(target = "subject", ignore = true)
     @Mapping(target = "schoolClass", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     ExamSubjects toEntity(ExamSubjectRequestDto dto);
 
     @Mapping(target = "exam", ignore = true)
     @Mapping(target = "subject", ignore = true)
     @Mapping(target = "schoolClass", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(ExamSubjectRequestDto dto, @MappingTarget ExamSubjects entity);

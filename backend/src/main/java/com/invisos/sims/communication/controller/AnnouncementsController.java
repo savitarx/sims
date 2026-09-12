@@ -7,10 +7,13 @@ import com.invisos.sims.communication.mapper.AnnouncementMapper;
 import com.invisos.sims.communication.model.Announcements;
 import com.invisos.sims.communication.service.AnnouncementsService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,25 +34,40 @@ public class AnnouncementsController {
         return "Announcement API Working!";
     }
 
-//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    /**
+     * Announcement feed for the announcements tab — visible to every user,
+     * newest first, optionally filtered by priority.
+     */
+//    @PreAuthorize("isAuthenticated()") // TODO: any authenticated user
     @GetMapping
-    public ResponseEntity<List<AnnouncementResponseDto>> getAll() {
-        return ResponseEntity.ok(announcementMapper.toResponseList(announcementsService.findAll()));
+    public ResponseEntity<Page<AnnouncementResponseDto>> getAll(
+            @RequestParam(required = false) AnnouncementPriority priority,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(
+                announcementsService.findAll(priority, pageable).map(announcementMapper::toResponse));
     }
 
-//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+//    @PreAuthorize("isAuthenticated()") // TODO: any authenticated user
     @GetMapping("/{id}")
     public ResponseEntity<AnnouncementResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(announcementMapper.toResponse(announcementsService.findById(id)));
     }
 
-//    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL/TEACHER/STUDENT
+    /**
+     * @deprecated use {@code GET /api/v1/announcements?priority=} instead.
+     */
+    @Deprecated
+//    @PreAuthorize("isAuthenticated()") // TODO: any authenticated user
     @GetMapping("/priority/{priority}")
-    public ResponseEntity<List<AnnouncementResponseDto>> getByPriority(
-            @PathVariable AnnouncementPriority priority) {
+    public ResponseEntity<Page<AnnouncementResponseDto>> getByPriority(
+            @PathVariable AnnouncementPriority priority,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
 
         return ResponseEntity.ok(
-                announcementMapper.toResponseList(announcementsService.findByPriority(priority)));
+                announcementsService.findAll(priority, pageable).map(announcementMapper::toResponse));
     }
 
 //    @PreAuthorize("isAuthenticated()") // TODO: Restrict to ADMIN/PRINCIPAL

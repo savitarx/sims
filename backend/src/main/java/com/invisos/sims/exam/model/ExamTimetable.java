@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import com.invisos.sims.admin.model.AdminStaff;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +24,13 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "exam_timetable")
+@Table(
+        name = "exam_timetable",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_exam_timetable_exam_subject",
+                columnNames = {"exam_subject_id"}
+        )
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,4 +52,8 @@ public class ExamTimetable extends BaseEntity {
 
     @Column(name = "exam_time")
     private LocalTime examTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private AdminStaff updatedBy;
 }
